@@ -41,6 +41,11 @@ BIChooseMethodUI >> classList [
 	^ classList
 ]
 
+{ #category : #util }
+BIChooseMethodUI >> classMethodsOfSelectedClassItem: selectedClass [
+	^ selectedClass class methods asOrderedCollection
+]
+
 { #category : #initialization }
 BIChooseMethodUI >> initializePresenter [
 	packageList
@@ -54,17 +59,25 @@ BIChooseMethodUI >> initializePresenter [
 		transform: [ :selectedClass | 
 			selectedClass
 				ifNotNil: [ isInstanceButtonSelected
-						ifTrue: [ selectedClass methods asOrderedCollection ]
-						ifFalse: [ selectedClass class methods asOrderedCollection ] ]
+						ifTrue: [ self instanceMethodsOfSelectedClassItem: selectedClass ]
+						ifFalse: [ self classMethodsOfSelectedClassItem: selectedClass ] ]
 				ifNil: [ {} asOrderedCollection ] ]
 		postTransmission: [ :destination | 
 			destination items isEmpty
 				ifTrue: [ destination selectIndex: 0 ]
 				ifFalse: [ destination selectIndex: 1 ] ].
 	radioButtonClassSide
-		whenActivatedDo: [ isInstanceButtonSelected := false ].
+		whenActivatedDo: [ isInstanceButtonSelected := false.
+			methodList
+				items:
+					(self
+						classMethodsOfSelectedClassItem: classList selection selectedItem) ].
 	radioButtonInstanceSide
-		whenActivatedDo: [ isInstanceButtonSelected := true ]
+		whenActivatedDo: [ isInstanceButtonSelected := true.
+			methodList
+				items:
+					(self
+						instanceMethodsOfSelectedClassItem: classList selection selectedItem) ]
 ]
 
 { #category : #initialization }
@@ -82,6 +95,11 @@ BIChooseMethodUI >> initializeWidgets [
 		add: packageList;
 		add: classList;
 		add: methodList
+]
+
+{ #category : #util }
+BIChooseMethodUI >> instanceMethodsOfSelectedClassItem: selectedClass [
+	^ selectedClass methods asOrderedCollection
 ]
 
 { #category : #accessing }

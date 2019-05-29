@@ -82,6 +82,15 @@ BIChooseMethodUITest >> testClickOnAnOtherItemPackageWhoClassesAreEmptyShouldTra
 	self assert: biChooseMethod classList selection selectedItem isNil
 ]
 
+{ #category : #tests }
+BIChooseMethodUITest >> testClickOnClassSideRAdioButtonShouldFillTheMethodListBySelectedClassListMethodClassSide [
+	self selectPackageNamed: BIUseForTestWithMethod package name.
+	self selectClassNamed: BIUseForTestWithMethod name.
+	biChooseMethod radioButtonClassSide click.
+	self
+		assert: biChooseMethod methodList items = BIUseForTestWithMethod class methods asOrderedCollection
+]
+
 { #category : #initialize }
 BIChooseMethodUITest >> testInitializeClassListShouldBeSelectTheFistItem [
 	self
