@@ -8,6 +8,10 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+BIUseForTestWithMethod class >> gandalf [
+]
+
+{ #category : #'as yet unclassified' }
 BIUseForTestWithMethod >> ahhhhhhhhhhhhhhh [
 
 ]

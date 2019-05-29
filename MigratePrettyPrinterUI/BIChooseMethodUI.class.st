@@ -53,7 +53,9 @@ BIChooseMethodUI >> initializePresenter [
 		transmitTo: methodList
 		transform: [ :selectedClass | 
 			selectedClass
-				ifNotNil: [ selectedClass methods asOrderedCollection ]
+				ifNotNil: [ isInstanceButtonSelected
+						ifTrue: [ selectedClass methods asOrderedCollection ]
+						ifFalse: [ selectedClass class methods asOrderedCollection ] ]
 				ifNil: [ {} asOrderedCollection ] ]
 		postTransmission: [ :destination | 
 			destination items isEmpty
