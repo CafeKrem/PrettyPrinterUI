@@ -91,6 +91,17 @@ BIChooseMethodUITest >> testClickOnClassSideRAdioButtonShouldFillTheMethodListBy
 		assert: biChooseMethod methodList items = BIUseForTestWithMethod class methods asOrderedCollection
 ]
 
+{ #category : #tests }
+BIChooseMethodUITest >> testIfMethodSelectionNilAndAcceptButtonClickShouldNotCallMethodToPrettyPrint [
+	| dialog mock |
+	mock := BIMockBISettingPreviewer new.
+	dialog := BIChooseMethodUI open: biChooseMethod with: mock.
+	biChooseMethod methodList selectIndex: 1.
+	dialog triggerOkAction.
+	[ self assert: mock methodCall ]
+		ensure: [ dialog application close ]
+]
+
 { #category : #initialize }
 BIChooseMethodUITest >> testInitializeClassListShouldBeSelectTheFistItem [
 	self

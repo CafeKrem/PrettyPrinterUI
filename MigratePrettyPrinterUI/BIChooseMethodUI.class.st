@@ -7,7 +7,8 @@ Class {
 		'methodList',
 		'radioButtonInstanceSide',
 		'radioButtonClassSide',
-		'isInstanceButtonSelected'
+		'isInstanceButtonSelected',
+		'uiReceiver'
 	],
 	#category : #MigratePrettyPrinterUI
 }
@@ -36,6 +37,20 @@ BIChooseMethodUI class >> main [
 		^ self new openDialogWithSpec.
 ]
 
+{ #category : #opening }
+BIChooseMethodUI class >> open: aBiChooseMethodUI with: aUI [
+	^ aBiChooseMethodUI
+		uiReceiver: aUI;
+		openDialogWithSpec
+]
+
+{ #category : #'instance creation' }
+BIChooseMethodUI class >> openOn: aUI [
+	^ self new
+		uiReceiver: aUI;
+		openDialogWithSpec
+]
+
 { #category : #accessing }
 BIChooseMethodUI >> classList [
 	^ classList
@@ -44,6 +59,16 @@ BIChooseMethodUI >> classList [
 { #category : #util }
 BIChooseMethodUI >> classMethodsOfSelectedClassItem: selectedClass [
 	^ selectedClass class methods asOrderedCollection
+]
+
+{ #category : #initialization }
+BIChooseMethodUI >> initializeDialogWindow: aDialog [
+	super initializeDialogWindow: aDialog.
+	aDialog
+		okAction: [ :presenter | 
+			methodList selection selectedItem
+				ifNil: [ self inform: 'you have to select a method' ]
+				ifNotNil: [ :selectedItem | uiReceiver methodToPRettyPrint: selectedItem ] ]
 ]
 
 { #category : #initialization }
@@ -155,4 +180,14 @@ BIChooseMethodUI >> setupRadioButtons [
 		associatedRadioButtons: radioButtonClassSide asOrderedCollection.
 	"instance radioButton is selected at initialisation"
 	isInstanceButtonSelected := true.
+]
+
+{ #category : #accessing }
+BIChooseMethodUI >> uiReceiver [
+	^ uiReceiver
+]
+
+{ #category : #accessing }
+BIChooseMethodUI >> uiReceiver: anObject [
+	uiReceiver := anObject
 ]

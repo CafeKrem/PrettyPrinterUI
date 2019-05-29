@@ -6,7 +6,8 @@ Class {
 		'classSearchField',
 		'methodSearchField',
 		'formattedCheckBox',
-		'sourceCodePane'
+		'sourceCodePane',
+		'methodToPRettyPrint'
 	],
 	#category : #MigratePrettyPrinterUI
 }
@@ -203,6 +204,16 @@ BISettingPreviewer2 >> initializeWidgets [
 { #category : #accessing }
 BISettingPreviewer2 >> methodSearchField [
 	^ methodSearchField
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> methodToPRettyPrint [
+	^ methodToPRettyPrint
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> methodToPRettyPrint: anObject [
+	methodToPRettyPrint := anObject
 ]
 
 { #category : #testing }
