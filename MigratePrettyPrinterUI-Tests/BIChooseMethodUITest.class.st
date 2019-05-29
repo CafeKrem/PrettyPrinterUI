@@ -67,6 +67,11 @@ BIChooseMethodUITest >> testClickOnAnOtherItemPackageWhoClassesAreEmptyShouldTra
 ]
 
 { #category : #initialize }
+BIChooseMethodUITest >> testInitialize [
+	self assert: biChooseMethod isInstanceButtonSelected.
+]
+
+{ #category : #initialize }
 BIChooseMethodUITest >> testInitializeClassListShouldBeSelectTheFistItem [
 	self
 		assert: biChooseMethod classList selection selectedIndex

@@ -4,7 +4,10 @@ Class {
 	#instVars : [
 		'packageList',
 		'classList',
-		'methodList'
+		'methodList',
+		'radioButtonInstanceSide',
+		'radioButtonClassSide',
+		'isInstanceButtonSelected'
 	],
 	#category : #MigratePrettyPrinterUI
 }
@@ -15,7 +18,15 @@ BIChooseMethodUI class >> defaultSpec [
 	^ SpecBoxLayout newHorizontal
 		add: #packageList;
 		add: #classList;
-		add: #methodList;
+		add:
+			(SpecBoxLayout newVertical
+				add: #methodList;
+				add:
+					(SpecBoxLayout newHorizontal
+						add: #radioButtonInstanceSide;
+						add: #radioButtonClassSide;
+						yourself)  withConstraints: [:contraint  |contraint height: 20] ;
+				yourself);
 		yourself
 ]
 
@@ -47,7 +58,11 @@ BIChooseMethodUI >> initializePresenter [
 		postTransmission: [ :destination | 
 			destination items isEmpty
 				ifTrue: [ destination selectIndex: 0 ]
-				ifFalse: [ destination selectIndex: 1 ] ]
+				ifFalse: [ destination selectIndex: 1 ] ].
+	radioButtonClassSide
+		whenActivatedDo: [ isInstanceButtonSelected := false ].
+	radioButtonInstanceSide
+		whenActivatedDo: [ isInstanceButtonSelected := true ]
 ]
 
 { #category : #initialization }
@@ -55,13 +70,21 @@ BIChooseMethodUI >> initializeWidgets [
 	packageList := self newList.
 	classList := self newList.
 	methodList := self newList.
+	radioButtonClassSide := self newRadioButton.
+	radioButtonInstanceSide := self newRadioButton.
 	self setupPackageList.
 	self setupClassList.
 	self setupMethodList.
+	self setupRadioButtons.
 	self focusOrder
 		add: packageList;
 		add: classList;
 		add: methodList
+]
+
+{ #category : #accessing }
+BIChooseMethodUI >> isInstanceButtonSelected [
+	^ isInstanceButtonSelected
 ]
 
 { #category : #accessing }
@@ -72,6 +95,16 @@ BIChooseMethodUI >> methodList [
 { #category : #accessing }
 BIChooseMethodUI >> packageList [
 	^ packageList
+]
+
+{ #category : #accessing }
+BIChooseMethodUI >> radioButtonClassSide [
+	^ radioButtonClassSide
+]
+
+{ #category : #accessing }
+BIChooseMethodUI >> radioButtonInstanceSide [
+	^ radioButtonInstanceSide
 ]
 
 { #category : #'initialize-widgets' }
@@ -90,4 +123,16 @@ BIChooseMethodUI >> setupMethodList [
 BIChooseMethodUI >> setupPackageList [
 	packageList items: RPackageOrganizer default packages.
 	packageList selectIndex: 1
+]
+
+{ #category : #'initialize-widgets' }
+BIChooseMethodUI >> setupRadioButtons [
+	radioButtonClassSide
+		label: 'class side';
+		associatedRadioButtons: radioButtonInstanceSide asOrderedCollection.
+	radioButtonInstanceSide
+		label: 'instance side';
+		associatedRadioButtons: radioButtonClassSide asOrderedCollection.
+	"instance radioButton is selected at initialisation"
+	isInstanceButtonSelected := true.
 ]
