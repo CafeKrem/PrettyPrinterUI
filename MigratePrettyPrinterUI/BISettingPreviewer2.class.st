@@ -5,7 +5,9 @@ Class {
 		'settingsTree',
 		'methodToPRettyPrint',
 		'chooseMethodUI',
-		'methodDropList'
+		'methodDropList',
+		'beforePrettyPrintTextPresenter',
+		'afterPrettyPrintTextPresenter'
 	],
 	#category : #MigratePrettyPrinterUI
 }
@@ -30,7 +32,11 @@ BISettingPreviewer2 class >> defaultSpec [
 				add: #methodDropList;
 				yourself)
 			withConstraints: [ :contraint | contraint height: 30 ];
-		add: #sourceCodePane;
+		add:
+			(SpecPanedLayout newHorizontal
+				add: #beforePrettyPrintTextPresenter;
+				add: #afterPrettyPrintTextPresenter;
+				yourself);
 		yourself
 ]
 
@@ -83,6 +89,16 @@ BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
 	anInstanceOFBIChooseMethodUI methodList selection selectedItem
 		ifNil: [ self inform: 'you have to select a method' ]
 		ifNotNil: [ :selectedItem | methodToPRettyPrint := selectedItem ]
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> afterPrettyPrintTextPresenter [
+	^ afterPrettyPrintTextPresenter
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> beforePrettyPrintTextPresenter [
+	^ beforePrettyPrintTextPresenter
 ]
 
 { #category : #'item creation' }
@@ -159,10 +175,19 @@ BISettingPreviewer2 >> initialExtent [
 ]
 
 { #category : #initialization }
+BISettingPreviewer2 >> initializePresenter [
+	methodDropList
+		transmitTo: beforePrettyPrintTextPresenter
+		transform: [ :method | method sourceCode ]
+]
+
+{ #category : #initialization }
 BISettingPreviewer2 >> initializeWidgets [
 	settingsTree := self buildSettingsTreeModel.
 	methodDropList := self newDropList.
 	chooseMethodUI := self newButton.
+	beforePrettyPrintTextPresenter := self newCode.
+	afterPrettyPrintTextPresenter := self newCode.
 	self setupMethoDropList.
 	self setupChooseMethodUI.
 	SystemAnnouncer uniqueInstance weak when: BISettingsChanged send: #whenASettingChanged to: self.

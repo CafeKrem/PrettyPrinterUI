@@ -22,3 +22,16 @@ BIUseByPrettyPrintConfig class >> yodaPrettyPrint [
 	
 	', moins en forme tu seras. '
 ]
+
+{ #category : #'as yet unclassified' }
+BIUseByPrettyPrintConfig class >> yodaPrettyPrint2 [
+	^ 'Le côté obscur de la Force, redouter tu dois.'
+	
+	
+	
+	
+	
+	
+	" kjlm km km kmlk plmk ml"
+	
+]
