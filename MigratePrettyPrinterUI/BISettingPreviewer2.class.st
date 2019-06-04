@@ -3,11 +3,10 @@ Class {
 	#superclass : #ComposablePresenter,
 	#instVars : [
 		'settingsTree',
-		'classSearchField',
-		'methodSearchField',
-		'formattedCheckBox',
 		'sourceCodePane',
-		'methodToPRettyPrint'
+		'methodToPRettyPrint',
+		'chooseMethodUI',
+		'methodDropList'
 	],
 	#category : #MigratePrettyPrinterUI
 }
@@ -28,9 +27,8 @@ BISettingPreviewer2 class >> defaultSpec [
 		add: #settingsTree;
 		add:
 			(SpecBoxLayout newHorizontal
-				add: #classSearchField;
-				add: #methodSearchField;
-				add: #formattedCheckBox;
+				add: #chooseMethodUI;
+				add: #methodDropList;
 				yourself)
 			withConstraints: [ :contraint | contraint height: 30 ];
 		add: #sourceCodePane;
@@ -90,24 +88,6 @@ BISettingPreviewer2 >> buildClassSearchField [
 ]
 
 { #category : #'item creation' }
-BISettingPreviewer2 >> buildFormattedCheckBox [
-	^ self newCheckBox
-		label: 'Formatted';
-		state: true;
-		whenActivatedDo:
-				[ 
-			formattedCheckBox toggleState.
-			self selectorAndClassAreCorrect
-				ifTrue: [ self formatSourceCode ] ];
-		whenDeactivatedDo:
-				[ 
-			formattedCheckBox toggleState.
-			self selectorAndClassAreCorrect 
-				ifTrue: [ sourceCodePane text: self compiledMethodFromSearchFields sourceCode ] ];
-		yourself
-]
-
-{ #category : #'item creation' }
 BISettingPreviewer2 >> buildMethodSearchField [
 	^ self newTextInput
 		placeholder: 'Enter the method selector...';
@@ -132,19 +112,6 @@ BISettingPreviewer2 >> buildSourceCodePane [
 	^ self newText
 		aboutToStyle: true;
 		yourself
-]
-
-{ #category : #accessing }
-BISettingPreviewer2 >> classSearchField [
-	^ classSearchField
-]
-
-{ #category : #accessing }
-BISettingPreviewer2 >> compiledMethodFromSearchFields [
-	"precondition text represent class and selector"
-	1 halt.
-	^ (self class environment at: classSearchField text asSymbol)
-			>> methodSearchField text asSymbol 
 ]
 
 { #category : #'item creation' }
@@ -175,11 +142,6 @@ BISettingPreviewer2 >> formatSourceCode [
 	sourceCodePane text: formatted
 ]
 
-{ #category : #accessing }
-BISettingPreviewer2 >> formattedCheckBox [
-	^ formattedCheckBox
-]
-
 { #category : #api }
 BISettingPreviewer2 >> initialExtent [
 	^ 1000 @ 700
@@ -188,22 +150,15 @@ BISettingPreviewer2 >> initialExtent [
 { #category : #initialization }
 BISettingPreviewer2 >> initializeWidgets [
 	sourceCodePane := self buildSourceCodePane.
-	classSearchField := self buildClassSearchField.
-	methodSearchField := self buildMethodSearchField.
 	settingsTree := self buildSettingsTreeModel.
-	formattedCheckBox := self buildFormattedCheckBox.
+	methodDropList := self newDropList.
+	chooseMethodUI := self newButton.
+	self setupMethoDropList.
+	self setupChooseMethodUI.
 	SystemAnnouncer uniqueInstance weak when: BISettingsChanged send: #whenASettingChanged to: self.
 	self focusOrder
 		add: settingsTree;
-		add: classSearchField;
-		add: methodSearchField;
-		add: formattedCheckBox;
 		add: sourceCodePane
-]
-
-{ #category : #accessing }
-BISettingPreviewer2 >> methodSearchField [
-	^ methodSearchField
 ]
 
 { #category : #accessing }
@@ -216,24 +171,23 @@ BISettingPreviewer2 >> methodToPRettyPrint: anObject [
 	methodToPRettyPrint := anObject
 ]
 
-{ #category : #testing }
-BISettingPreviewer2 >> selectorAndClassAreCorrect [
-	| class |
-	methodSearchField text
-		ifNotNil:
-			[ :method | 
-			classSearchField text
-				ifNotNil:
-					[ 
-					class := self class environment at: classSearchField text asSymbol ifAbsent: [ ^ false].
-					(class includesSelector: method asSymbol)
-								ifTrue: [ ^ true ]]].
-	^ false 
-]
-
 { #category : #accessing }
 BISettingPreviewer2 >> settingsTree [
 	^ settingsTree
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> setupChooseMethodUI [
+	chooseMethodUI
+		label: 'choose another method';
+		action: [ BIChooseMethodUI openOn: self ]
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> setupMethoDropList [
+	methodDropList
+		items: BIUseByPrettyPrintConfig class methods;
+		displayBlock: [ :item | item selector ]
 ]
 
 { #category : #accessing }
