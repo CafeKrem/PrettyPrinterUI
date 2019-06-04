@@ -86,9 +86,11 @@ BISettingPreviewer2 class >> settingsOn: aBuilder [
 
 { #category : #visiting }
 BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
+	self flag: #whenConfigMigrate.
 	anInstanceOFBIChooseMethodUI methodList selection selectedItem
 		ifNil: [ self inform: 'you have to select a method' ]
-		ifNotNil: [ :selectedItem | methodToPRettyPrint := selectedItem ]
+		ifNotNil:
+			[ :selectedItem | beforePrettyPrintTextPresenter text: selectedItem sourceCode ]
 ]
 
 { #category : #accessing }
@@ -178,7 +180,7 @@ BISettingPreviewer2 >> initialExtent [
 BISettingPreviewer2 >> initializePresenter [
 	methodDropList
 		transmitTo: beforePrettyPrintTextPresenter
-		transform: [ :method | method sourceCode ]
+		transform: [ :method |method sourceCode ]
 ]
 
 { #category : #initialization }
@@ -189,10 +191,14 @@ BISettingPreviewer2 >> initializeWidgets [
 	beforePrettyPrintTextPresenter := self newCode.
 	afterPrettyPrintTextPresenter := self newCode.
 	self setupMethoDropList.
-	self setupChooseMethodUI.
-	SystemAnnouncer uniqueInstance weak when: BISettingsChanged send: #whenASettingChanged to: self.
-	self focusOrder
-		add: settingsTree
+	self setupChooseMethodUI .
+	self setupBeforePrettyPrinterCodePresenter.
+	self setupAfterPrettyPrinterCodePresenter.
+	SystemAnnouncer uniqueInstance weak
+		when: BISettingsChanged
+		send: #whenASettingChanged
+		to: self.
+	self focusOrder add: settingsTree
 ]
 
 { #category : #accessing }
@@ -213,6 +219,16 @@ BISettingPreviewer2 >> methodToPRettyPrint: anObject [
 { #category : #accessing }
 BISettingPreviewer2 >> settingsTree [
 	^ settingsTree
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> setupAfterPrettyPrinterCodePresenter [
+	afterPrettyPrintTextPresenter withSyntaxHighlight 
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> setupBeforePrettyPrinterCodePresenter [
+	beforePrettyPrintTextPresenter withSyntaxHighlight
 ]
 
 { #category : #initialization }
