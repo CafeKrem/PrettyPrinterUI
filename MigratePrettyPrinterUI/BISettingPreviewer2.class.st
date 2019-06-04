@@ -79,6 +79,13 @@ BISettingPreviewer2 class >> settingsOn: aBuilder [
 	
 ]
 
+{ #category : #visiting }
+BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
+	anInstanceOFBIChooseMethodUI methodList selection selectedItem
+		ifNil: [ self inform: 'you have to select a method' ]
+		ifNotNil: [ :selectedItem | methodToPRettyPrint := selectedItem ]
+]
+
 { #category : #'item creation' }
 BISettingPreviewer2 >> buildClassSearchField [
 	^ self newTextInput
