@@ -3,7 +3,6 @@ Class {
 	#superclass : #ComposablePresenter,
 	#instVars : [
 		'settingsTree',
-		'sourceCodePane',
 		'methodToPRettyPrint',
 		'chooseMethodUI',
 		'methodDropList'
@@ -143,10 +142,10 @@ BISettingPreviewer2 >> displayNodeFor: aNode [
 { #category : #api }
 BISettingPreviewer2 >> formatSourceCode [
 	| source tree formatted |
+	self flag: #whenTreeConfigMigrate.
 	source := self compiledMethodFromSearchFields sourceCode.
 	tree := RBParser parseMethod: source onError: [ :msg :pos | ^ self ].
 	formatted := tree formattedCode.
-	sourceCodePane text: formatted
 ]
 
 { #category : #api }
@@ -156,7 +155,6 @@ BISettingPreviewer2 >> initialExtent [
 
 { #category : #initialization }
 BISettingPreviewer2 >> initializeWidgets [
-	sourceCodePane := self buildSourceCodePane.
 	settingsTree := self buildSettingsTreeModel.
 	methodDropList := self newDropList.
 	chooseMethodUI := self newButton.
@@ -164,8 +162,7 @@ BISettingPreviewer2 >> initializeWidgets [
 	self setupChooseMethodUI.
 	SystemAnnouncer uniqueInstance weak when: BISettingsChanged send: #whenASettingChanged to: self.
 	self focusOrder
-		add: settingsTree;
-		add: sourceCodePane
+		add: settingsTree
 ]
 
 { #category : #accessing }
@@ -197,11 +194,6 @@ BISettingPreviewer2 >> setupMethoDropList [
 		displayBlock: [ :item | item selector ]
 ]
 
-{ #category : #accessing }
-BISettingPreviewer2 >> sourceCodePane [
-	^ sourceCodePane
-]
-
 { #category : #api }
 BISettingPreviewer2 >> title [
 	^ 'Blue Ink Setting Previewer'
@@ -211,20 +203,4 @@ BISettingPreviewer2 >> title [
 BISettingPreviewer2 >> whenASettingChanged [
 	(self formattedCheckBox state and: [ self selectorAndClassAreCorrect ])
 		ifTrue: [ self formatSourceCode ] 
-]
-
-{ #category : #'event handling' }
-BISettingPreviewer2 >> whenSelectorAccepted [
-	| compiledMethod |
-	self selectorAndClassAreCorrect
-		ifTrue:
-			[ 
-			compiledMethod := self compiledMethodFromSearchFields.
-			sourceCodePane behavior: compiledMethod methodClass.
-			self formattedCheckBox state
-				ifTrue: [ self formatSourceCode ]
-				ifFalse: [ sourceCodePane text: compiledMethod sourceCode ]]
-		ifFalse: [ 
-			sourceCodePane behavior: nil.
-			sourceCodePane text: ' ' ]
 ]
