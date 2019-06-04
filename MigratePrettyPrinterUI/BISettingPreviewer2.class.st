@@ -3,11 +3,16 @@ Class {
 	#superclass : #ComposablePresenter,
 	#instVars : [
 		'settingsTree',
-		'methodToPRettyPrint',
 		'chooseMethodUI',
 		'methodDropList',
 		'beforePrettyPrintTextPresenter',
-		'afterPrettyPrintTextPresenter'
+		'afterPrettyPrintTextPresenter',
+		'settingsDropList',
+		'saveMethodButton',
+		'removeMethodButton',
+		'removeSettingButton',
+		'saveSettingButton',
+		'methodProvider'
 	],
 	#category : #MigratePrettyPrinterUI
 }
@@ -103,41 +108,6 @@ BISettingPreviewer2 >> beforePrettyPrintTextPresenter [
 	^ beforePrettyPrintTextPresenter
 ]
 
-{ #category : #'item creation' }
-BISettingPreviewer2 >> buildClassSearchField [
-	^ self newTextInput
-		placeholder: 'Enter the class name...';
-		autoAccept: true;
-		yourself
-]
-
-{ #category : #'item creation' }
-BISettingPreviewer2 >> buildMethodSearchField [
-	^ self newTextInput
-		placeholder: 'Enter the method selector...';
-		whenTextIsAcceptedDo: [ self whenSelectorAccepted ];
-		yourself
-]
-
-{ #category : #'item creation' }
-BISettingPreviewer2 >> buildSettingsTreeModel [
-	| settingsTreeModel |
-	settingsTreeModel := self newTree.
-	settingsTreeModel
-		roots:
-			((SettingTree acceptableKeywords: #(#systemsettings)) nodeList
-				select: [ :node | node parentName = #blueInkFormatter ]).
-	settingsTreeModel displayBlock: [ :node | self displayNodeFor: node ].
-	^ settingsTreeModel
-]
-
-{ #category : #'item creation' }
-BISettingPreviewer2 >> buildSourceCodePane [
-	^ self newText
-		aboutToStyle: true;
-		yourself
-]
-
 { #category : #accessing }
 BISettingPreviewer2 >> chooseMethodUI [
 	^ chooseMethodUI
@@ -160,15 +130,6 @@ BISettingPreviewer2 >> displayNodeFor: aNode [
 		color: Smalltalk ui theme lightBackgroundColor;
 		hResizing: #shrinkWrap;
 		yourself
-]
-
-{ #category : #api }
-BISettingPreviewer2 >> formatSourceCode [
-	| source tree formatted |
-	self flag: #whenTreeConfigMigrate.
-	source := self compiledMethodFromSearchFields sourceCode.
-	tree := RBParser parseMethod: source onError: [ :msg :pos | ^ self ].
-	formatted := tree formattedCode.
 ]
 
 { #category : #api }
@@ -204,16 +165,6 @@ BISettingPreviewer2 >> initializeWidgets [
 { #category : #accessing }
 BISettingPreviewer2 >> methodDropList [
 	^ methodDropList
-]
-
-{ #category : #accessing }
-BISettingPreviewer2 >> methodToPRettyPrint [
-	^ methodToPRettyPrint
-]
-
-{ #category : #accessing }
-BISettingPreviewer2 >> methodToPRettyPrint: anObject [
-	methodToPRettyPrint := anObject
 ]
 
 { #category : #accessing }
