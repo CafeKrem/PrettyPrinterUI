@@ -30,19 +30,24 @@ BISettingPreviewer2 class >> buildOpenBIInspectorButton [
 BISettingPreviewer2 class >> defaultSpec [
 	<spec: #default>
 	^ SpecBoxLayout newVertical
-		add: #settingsTree;
-		add:
-			(SpecBoxLayout newHorizontal
-				add: #chooseMethodUI;
-				add: #methodDropList;
-				yourself)
-			withConstraints: [ :contraint | contraint height: 30 ];
-		add:
+		add: #settingsTree; add:
 			(SpecPanedLayout newHorizontal
-				add: #beforePrettyPrintTextPresenter;
-				add: #afterPrettyPrintTextPresenter;
-				yourself);
-		yourself
+				add:
+					(SpecBoxLayout newVertical
+						add:
+							(SpecBoxLayout newHorizontal
+								add: #saveMethodButton; add: #removeMethodButton; add: #chooseMethodUI; 
+									yourself)
+							withConstraints: [ :contraint | contraint height: 30 ]; add: #methodDropList
+							withConstraints: [ :contraint | contraint height: 30 ]; add: #beforePrettyPrintTextPresenter; 
+							yourself); add:
+					(SpecBoxLayout newVertical
+						add:
+							(SpecBoxLayout newHorizontal
+								add: #saveSettingButton; add: #removeSettingButton; yourself)
+							withConstraints: [ :contraint | contraint height: 30 ]; add: #settingsDropList
+							withConstraints: [ :contraint | contraint height: 30 ]; add: #afterPrettyPrintTextPresenter; 
+							yourself); yourself); yourself
 ]
 
 { #category : #settings }
@@ -58,6 +63,12 @@ BISettingPreviewer2 class >> dialogOpenBIPreviewer [
 BISettingPreviewer2 class >> open [
 	<script>
 	self new openWithSpec 
+]
+
+{ #category : #'instance creation' }
+BISettingPreviewer2 class >> open: aClass [
+	^ (self new
+		methodProvider: aClass ; yourself) openWithSpec
 ]
 
 { #category : #'button behavior' }
@@ -113,6 +124,11 @@ BISettingPreviewer2 >> chooseMethodUI [
 	^ chooseMethodUI
 ]
 
+{ #category : #initialization }
+BISettingPreviewer2 >> defaultMethodProvider [
+	methodProvider := BIMethodProvider 
+]
+
 { #category : #'item creation' }
 BISettingPreviewer2 >> displayNodeFor: aNode [
 	| nodeMorphLeft nodeMorphRight |
@@ -146,20 +162,34 @@ BISettingPreviewer2 >> initializePresenter [
 
 { #category : #initialization }
 BISettingPreviewer2 >> initializeWidgets [
-	settingsTree := self buildSettingsTreeModel.
+	self defaultMethodProvider.
+	settingsTree := self newTree.
 	methodDropList := self newDropList.
 	chooseMethodUI := self newButton.
 	beforePrettyPrintTextPresenter := self newCode.
 	afterPrettyPrintTextPresenter := self newCode.
+	settingsDropList := self newDropList.
+	saveMethodButton := self newButton.
+	removeMethodButton := self newButton.
+	saveSettingButton := self newButton.
+	removeSettingButton := self newButton.
+	self setupSaveMethoButton.
+	self setupRemoveMethodButton.
+	self setupRemoveSettingButton.
+	self setupSaveSettingButton.
+	self setupSettingsDropList.
+	self setupSettingsTree.
 	self setupMethoDropList.
-	self setupChooseMethodUI .
+	self setupChooseMethodUI.
 	self setupBeforePrettyPrinterCodePresenter.
 	self setupAfterPrettyPrinterCodePresenter.
 	SystemAnnouncer uniqueInstance weak
 		when: BISettingsChanged
 		send: #whenASettingChanged
 		to: self.
-	self focusOrder add: settingsTree
+	self focusOrder
+		add: settingsTree; add: chooseMethodUI; add: methodDropList; add: beforePrettyPrintTextPresenter; 
+			add: afterPrettyPrintTextPresenter
 ]
 
 { #category : #accessing }
@@ -168,32 +198,112 @@ BISettingPreviewer2 >> methodDropList [
 ]
 
 { #category : #accessing }
+BISettingPreviewer2 >> methodProvider [
+	^ methodProvider
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> methodProvider: anObject [
+	methodProvider := anObject
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> removeMethodButton [
+	^ removeMethodButton
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> removeSettingButton [
+	^ removeSettingButton
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> saveMethodButton [
+	^ saveMethodButton
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> saveSettingButton [
+	^ saveSettingButton
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> settingsDropList [
+	^ settingsDropList
+]
+
+{ #category : #accessing }
 BISettingPreviewer2 >> settingsTree [
 	^ settingsTree
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupAfterPrettyPrinterCodePresenter [
 	afterPrettyPrintTextPresenter withSyntaxHighlight 
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupBeforePrettyPrinterCodePresenter [
 	beforePrettyPrintTextPresenter withSyntaxHighlight
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupChooseMethodUI [
 	chooseMethodUI
 		label: 'choose another method';
 		action: [ BIChooseMethodUI openOn: self ]
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupMethoDropList [
 	methodDropList
-		items: BIUseByPrettyPrintConfig class methods;
-		displayBlock: [ :item | item selector ]
+		items:
+			(methodProvider methods , methodProvider class methods
+				select: [ :each | each category = 'methods' ]); displayBlock: [ :item | item selector ]
+]
+
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> setupRemoveMethodButton [
+	removeMethodButton label: 'remove current Method'
+]
+
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> setupRemoveSettingButton [
+	removeSettingButton label: 'remove setting'
+]
+
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> setupSaveMethoButton [
+	saveMethodButton label: 'save method';
+	action: [ ]
+]
+
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> setupSaveMethodButton [
+	saveMethodButton label: 'save'
+]
+
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> setupSaveSettingButton [
+	saveSettingButton label: 'save'
+]
+
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> setupSettingsDropList [
+	settingsDropList
+		items:
+			((methodProvider methods , methodProvider class methods) 
+				asOrderedCollection select: [ :each | each category = 'settings' ]); 
+			displayBlock: [ :each | each selector ]
+]
+
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> setupSettingsTree [
+	settingsTree
+		roots:
+			((SettingTree acceptableKeywords: #(#systemsettings)) nodeList
+				select: [ :node | node parentName = #blueInkFormatter ]); 
+			displayBlock: [ :node | self displayNodeFor: node ]
 ]
 
 { #category : #api }
