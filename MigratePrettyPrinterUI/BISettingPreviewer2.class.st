@@ -120,6 +120,11 @@ BISettingPreviewer2 >> buildSourceCodePane [
 		yourself
 ]
 
+{ #category : #accessing }
+BISettingPreviewer2 >> chooseMethodUI [
+	^ chooseMethodUI
+]
+
 { #category : #'item creation' }
 BISettingPreviewer2 >> displayNodeFor: aNode [
 	| nodeMorphLeft nodeMorphRight |
@@ -163,6 +168,11 @@ BISettingPreviewer2 >> initializeWidgets [
 	SystemAnnouncer uniqueInstance weak when: BISettingsChanged send: #whenASettingChanged to: self.
 	self focusOrder
 		add: settingsTree
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> methodDropList [
+	^ methodDropList
 ]
 
 { #category : #accessing }
