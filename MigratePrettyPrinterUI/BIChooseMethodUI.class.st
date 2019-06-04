@@ -34,21 +34,27 @@ BIChooseMethodUI class >> defaultSpec [
 { #category : #examples }
 BIChooseMethodUI class >> main [ 
 	<example>
-		^ self new openDialogWithSpec.
+		^ self openOn: nil .
 ]
 
-{ #category : #opening }
-BIChooseMethodUI class >> open: aBiChooseMethodUI with: aUI [
-	^ aBiChooseMethodUI
-		uiReceiver: aUI;
-		openDialogWithSpec
+{ #category : #'as yet unclassified' }
+BIChooseMethodUI class >> open: aWindowPresenter withExtent: aPoint [ 
+	aWindowPresenter extent: aPoint.
 ]
 
 { #category : #'instance creation' }
 BIChooseMethodUI class >> openOn: aUI [
-	^ self new
+	| window |
+	window := self new
 		uiReceiver: aUI;
-		openDialogWithSpec
+		yourself.
+	self open: window openDialogWithSpec withExtent: 550@350.
+	^ window
+]
+
+{ #category : #specs }
+BIChooseMethodUI class >> title [
+	^ 'method chooser'
 ]
 
 { #category : #accessing }
@@ -64,11 +70,7 @@ BIChooseMethodUI >> classMethodsOfSelectedClassItem: selectedClass [
 { #category : #initialization }
 BIChooseMethodUI >> initializeDialogWindow: aDialog [
 	super initializeDialogWindow: aDialog.
-	aDialog
-		okAction: [ :presenter | 
-			methodList selection selectedItem
-				ifNil: [ self inform: 'you have to select a method' ]
-				ifNotNil: [ :selectedItem | uiReceiver methodToPRettyPrint: selectedItem ] ]
+	aDialog okAction: [ :presenter | uiReceiver acceptBlock: self ]
 ]
 
 { #category : #initialization }
@@ -154,20 +156,27 @@ BIChooseMethodUI >> radioButtonInstanceSide [
 
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupClassList [
-	classList items: (packageList selection selectedItem classes) asOrderedCollection.
-	classList selectIndex: 1
+	classList
+		items: packageList selection selectedItem classes asOrderedCollection;
+		icons: [:item |self iconNamed: #system  ];
+		selectIndex: 1
 ]
 
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupMethodList [
-	methodList items: classList selection selectedItem methods.
-	methodList selectIndex: 1
+	methodList
+		items: classList selection selectedItem methods;
+		displayBlock: [ :item | item selector ];
+		selectIndex: 1
 ]
 
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupPackageList [
-	packageList items: RPackageOrganizer default packages.
-	packageList selectIndex: 1
+	packageList
+		items: RPackageOrganizer default packages;
+		icons: [:item |self iconNamed: #package];
+		displayBlock: [ :item | item name ];
+		selectIndex: 1
 ]
 
 { #category : #'initialize-widgets' }
