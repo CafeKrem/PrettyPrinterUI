@@ -70,7 +70,7 @@ BIChooseMethodUI >> classMethodsOfSelectedClassItem: selectedClass [
 { #category : #initialization }
 BIChooseMethodUI >> initializeDialogWindow: aDialog [
 	super initializeDialogWindow: aDialog.
-	aDialog okAction: [ :presenter | uiReceiver acceptBlock: self ]
+	aDialog okAction: [ :presenter | uiReceiver acceptAction: self  ]
 ]
 
 { #category : #initialization }
@@ -137,6 +137,11 @@ BIChooseMethodUI >> isInstanceButtonSelected [
 { #category : #accessing }
 BIChooseMethodUI >> methodList [
 	^ methodList
+]
+
+{ #category : #methods }
+BIChooseMethodUI >> myMethodTestazert [ 
+^ klm
 ]
 
 { #category : #accessing }

@@ -12,7 +12,8 @@ Class {
 		'removeMethodButton',
 		'removeSettingButton',
 		'saveSettingButton',
-		'methodProvider'
+		'methodProvider',
+		'formaterPrettyPrinter'
 	],
 	#classInstVars : [
 		'methodProvider'
@@ -160,6 +161,16 @@ BISettingPreviewer2 >> displayNodeFor: aNode [
 		yourself
 ]
 
+{ #category : #'initialization widgets' }
+BISettingPreviewer2 >> formatPrettyPrint [
+	^ formaterPrettyPrinter format: methodDropList selectedItem ast
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> formaterPrettyPrinter [
+	^ formaterPrettyPrinter
+]
+
 { #category : #api }
 BISettingPreviewer2 >> initialExtent [
 	^ 1000 @ 700
@@ -196,6 +207,7 @@ BISettingPreviewer2 >> initializePresenter [
 { #category : #initialization }
 BISettingPreviewer2 >> initializeWidgets [
 	self defaultMethodProvider.
+	formaterPrettyPrinter := BIConfigurableFormatter new.
 	settingsTree := self newTree.
 	methodDropList := self newDropList.
 	chooseMethodUI := self newButton.
@@ -210,8 +222,8 @@ BISettingPreviewer2 >> initializeWidgets [
 	self setupRemoveMethodButton.
 	self setupRemoveSettingButton.
 	self setupSaveSettingButton.
+	self setupMethodDropList.	
 	self setupSettingsDropList.
-	self setupMethoDropList.
 	self setupSettingsTree.
 	self setupChooseMethodUI.
 	self setupBeforePrettyPrinterCodePresenter.
@@ -223,6 +235,11 @@ BISettingPreviewer2 >> initializeWidgets [
 	self focusOrder
 		add: settingsTree; add: chooseMethodUI; add: methodDropList; add: beforePrettyPrintTextPresenter; 
 			add: afterPrettyPrintTextPresenter
+]
+
+{ #category : #api }
+BISettingPreviewer2 >> installContext: aContext [
+	formaterPrettyPrinter installNewContext: aContext
 ]
 
 { #category : #accessing }
@@ -272,13 +289,20 @@ BISettingPreviewer2 >> settingsTree [
 
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupAfterPrettyPrinterCodePresenter [
-	afterPrettyPrintTextPresenter withSyntaxHighlight 
+	afterPrettyPrintTextPresenter withSyntaxHighlight.
+	1halt.
+	(methodDropList selectedItem isNil
+		or: [ settingsDropList selectedItem isNil ])
+		ifTrue: [ ^ self ].
+	afterPrettyPrintTextPresenter text: self formatPrettyPrint
 ]
 
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupBeforePrettyPrinterCodePresenter [
+	beforePrettyPrintTextPresenter withSyntaxHighlight.
+	methodDropList selectedItem ifNil: [ ^ self ].
 	beforePrettyPrintTextPresenter
-		withSyntaxHighlight; text: methodDropList selectedItem sourceCode
+		text: methodDropList selectedItem sourceCode
 ]
 
 { #category : #'initialization widgets' }
@@ -289,11 +313,14 @@ BISettingPreviewer2 >> setupChooseMethodUI [
 ]
 
 { #category : #'initialization widgets' }
-BISettingPreviewer2 >> setupMethoDropList [
+BISettingPreviewer2 >> setupMethodDropList [
 	methodDropList
 		items:
 			(methodProvider methods , methodProvider class methods
-				select: [ :each | each category = 'methods' ]) asOrderedCollection;  displayBlock: [ :item | item selector ]
+				select: [ :each | each category = 'methods' ]) asOrderedCollection; 
+			displayBlock: [ :item | item selector ].
+	methodDropList listItems ifNil: [ ^ self ].
+	methodDropList selectedIndex: 1
 ]
 
 { #category : #'initialization widgets' }
@@ -318,11 +345,20 @@ BISettingPreviewer2 >> setupSaveSettingButton [
 
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupSettingsDropList [
+	| selectedSetting |
 	settingsDropList
 		items:
-			((methodProvider methods , methodProvider class methods) 
+			((methodProvider methods , methodProvider class methods)
 				asOrderedCollection select: [ :each | each category = 'settings' ]); 
-			displayBlock: [ :each | each selector ]
+			displayBlock: [ :each | each selector ].
+	settingsDropList listItems ifNil: [ ^ self ].
+	settingsDropList selectedIndex: 1.
+	selectedSetting := settingsDropList selectedItem.
+	formaterPrettyPrinter
+		installNewContext:
+			(selectedSetting
+				valueWithReceiver: selectedSetting classBinding
+				arguments: #())
 ]
 
 { #category : #'initialization widgets' }

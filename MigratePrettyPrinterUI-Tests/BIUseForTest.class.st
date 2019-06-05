@@ -4,7 +4,12 @@ Class {
 	#category : #'MigratePrettyPrinterUI-Tests'
 }
 
-{ #category : #configs }
+{ #category : #settings }
+BIUseForTest class >> basicConfig [ 
+	^ BIPrettyPrinterContext new
+]
+
+{ #category : #settings }
 BIUseForTest class >> config1 [ 
 ]
 

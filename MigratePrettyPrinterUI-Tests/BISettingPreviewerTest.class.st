@@ -2,8 +2,7 @@ Class {
 	#name : #BISettingPreviewerTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'biSettingPreviewer',
-		'biSetingPreviewWindow'
+		'biSettingPreviewer'
 	],
 	#category : #'MigratePrettyPrinterUI-Tests'
 }
@@ -33,14 +32,13 @@ BISettingPreviewerTest >> selectPackageNamed: aName FromUI: biChooseMethod [
 { #category : #running }
 BISettingPreviewerTest >> setUp [
 	"Hooks that subclasses may override to define the fixture of test."
-	biSettingPreviewer := BISettingPreviewer2 new.
-	biSetingPreviewWindow := biSettingPreviewer openWithSpec
+	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
+	
 	
 ]
 
 { #category : #running }
 BISettingPreviewerTest >> tearDown [ 
-	biSetingPreviewWindow close.
 	biSettingPreviewer delete.
 	super tearDown
 ]
@@ -108,10 +106,10 @@ BISettingPreviewerTest >> testDropListSelectedIndexShouldBeEqualsToOne [
 
 { #category : #initialization }
 BISettingPreviewerTest >> testInitializeAfterPrettyShouldFillWithTheSelectedItemOfDropListPresenter [
-	self fail.
+	self flag:'pretyPrinter error'.
 	self
-		assert: biSettingPreviewer afterPrettyPrintTextPresenter
-		equals: biSettingPreviewer methodDropList selectedItem sourceCode
+		assert: biSettingPreviewer afterPrettyPrintTextPresenter text
+		equals: (biSettingPreviewer formaterPrettyPrinter format: biSettingPreviewer  methodDropList selectedItem ast)
 ]
 
 { #category : #initialization }
