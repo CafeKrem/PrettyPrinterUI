@@ -67,8 +67,11 @@ BISettingPreviewer2 class >> open [
 
 { #category : #'instance creation' }
 BISettingPreviewer2 class >> open: aClass [
-	^ (self new
-		methodProvider: aClass ; yourself) openWithSpec
+	| presenter |
+	presenter := self new
+		methodProvider: aClass; yourself.
+	presenter openWithSpec.
+	^ presenter
 ]
 
 { #category : #'button behavior' }
@@ -157,7 +160,17 @@ BISettingPreviewer2 >> initialExtent [
 BISettingPreviewer2 >> initializePresenter [
 	methodDropList
 		transmitTo: beforePrettyPrintTextPresenter
-		transform: [ :method |method sourceCode ]
+		transform: [ :method | method sourceCode ].
+	removeMethodButton
+		action: [ | selectedItem |
+			selectedItem := methodDropList selectedItem.
+			methodDropList
+				items:
+					(methodDropList listItems
+						removeAt: methodDropList selectedIndex; yourself).
+			selectedItem removeFromSystem.
+			methodDropList selectedIndex: 1.
+			self updateAllWidgets ]
 ]
 
 { #category : #initialization }
@@ -259,7 +272,7 @@ BISettingPreviewer2 >> setupMethoDropList [
 	methodDropList
 		items:
 			(methodProvider methods , methodProvider class methods
-				select: [ :each | each category = 'methods' ]); displayBlock: [ :item | item selector ]
+				select: [ :each | each category = 'methods' ]) asOrderedCollection;  displayBlock: [ :item | item selector ]
 ]
 
 { #category : #'initialization widgets' }
@@ -302,13 +315,19 @@ BISettingPreviewer2 >> setupSettingsTree [
 	settingsTree
 		roots:
 			((SettingTree acceptableKeywords: #(#systemsettings)) nodeList
-				select: [ :node | node parentName = #blueInkFormatter ]); 
+				select: [ :node | node parentName = #blueInkFormatter ]) asOrderedCollection; 
 			displayBlock: [ :node | self displayNodeFor: node ]
 ]
 
 { #category : #api }
 BISettingPreviewer2 >> title [
 	^ 'Blue Ink Setting Previewer'
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> updateAllWidgets [
+	self needRebuild: true.
+	^ self buildWithSpec
 ]
 
 { #category : #'event handling' }

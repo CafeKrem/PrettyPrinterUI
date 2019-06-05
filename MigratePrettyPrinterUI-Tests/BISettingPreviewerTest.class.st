@@ -41,6 +41,8 @@ BISettingPreviewerTest >> setUp [
 { #category : #running }
 BISettingPreviewerTest >> tearDown [ 
 	biSetingPreviewWindow close.
+	biSettingPreviewer delete.
+	super tearDown
 ]
 
 { #category : #tests }
@@ -57,6 +59,25 @@ BISettingPreviewerTest >> testClickChooseMethodButtonAndAcceptWithNotNilMethodSh
 	self
 		assert: biSettingPreviewer beforePrettyPrintTextPresenter text
 		equals: chooseMethodUI methodList selection selectedItem sourceCode
+]
+
+{ #category : #tests }
+BISettingPreviewerTest >> testClickOnRemoveMethodButtonShouldRemoveTheFromMethodDropList [
+	[ BIMethodProvider 
+		compile: 'myMethodTestazert ' , String cr , '^ klm'.
+		(BIMethodProvider  >> #myMethodTestazert) protocol: 'methods'.
+	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
+	biSettingPreviewer methodDropList
+		selectedIndex:
+			(biSettingPreviewer methodDropList listItems indexOf: (BIMethodProvider>>#myMethodTestazert)).
+	biSettingPreviewer removeMethodButton click.
+	self
+		deny:
+			(biSettingPreviewer methodDropList listItems
+				contains: [ :item | item selector = #myMethodTestazert ]) ]
+		ensure: [ [ (BIChooseMethodUI class >> #myMethodTestazert) removeFromSystem ]
+				on: KeyNotFound
+				do: [  ] ]
 ]
 
 { #category : #initialization }
