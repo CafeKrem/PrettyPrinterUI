@@ -11,6 +11,7 @@ BIUseForTest class >> basicConfig [
 
 { #category : #settings }
 BIUseForTest class >> config1 [ 
+	^ BIPrettyPrinterContext new
 ]
 
 { #category : #methods }

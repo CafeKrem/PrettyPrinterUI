@@ -122,6 +122,42 @@ BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
 			[ :selectedItem | beforePrettyPrintTextPresenter text: selectedItem sourceCode ]
 ]
 
+{ #category : #initialization }
+BISettingPreviewer2 >> actionMethodDropList [
+	methodDropList
+		transmitTo: beforePrettyPrintTextPresenter
+		transform: [ :method | method sourceCode ]
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> actionRemoveMethodButton [
+	removeMethodButton
+		action: [ | selectedItem |
+			selectedItem := methodDropList selectedItem.
+			methodDropList
+				items:
+					(methodDropList listItems
+						removeAt: methodDropList selectedIndex; yourself).
+			selectedItem removeFromSystem.
+			methodDropList selectedIndex: 1.
+			self updateAllWidgets ]
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> actionSaveMethodButton [
+	saveMethodButton
+		action: [ | newMethod |
+			newMethod := methodProvider
+				>> (methodProvider compile: beforePrettyPrintTextPresenter text).
+			newMethod protocol: 'methods'.
+			methodDropList
+				items:
+					(methodDropList listItems
+						add: newMethod; yourself).
+			methodDropList
+				selectedIndex: (methodDropList listItems indexOf: newMethod) ]
+]
+
 { #category : #accessing }
 BISettingPreviewer2 >> afterPrettyPrintTextPresenter [
 	^ afterPrettyPrintTextPresenter
@@ -178,30 +214,20 @@ BISettingPreviewer2 >> initialExtent [
 
 { #category : #initialization }
 BISettingPreviewer2 >> initializePresenter [
-	methodDropList
-		transmitTo: beforePrettyPrintTextPresenter
-		transform: [ :method | method sourceCode ].
-	removeMethodButton
-		action: [ | selectedItem |
-			selectedItem := methodDropList selectedItem.
-			methodDropList
-				items:
-					(methodDropList listItems
-						removeAt: methodDropList selectedIndex; yourself).
-			selectedItem removeFromSystem.
-			methodDropList selectedIndex: 1.
-			self updateAllWidgets ].
-	saveMethodButton
-		action: [ | newMethod |
-			newMethod :=methodProvider >> (methodProvider
-				compile: beforePrettyPrintTextPresenter text).
-			newMethod protocol: 'methods'.
-			methodDropList
-				items:
-					(methodDropList listItems
-						add: newMethod; yourself).
-			methodDropList
-				selectedIndex: (methodDropList listItems indexOf: newMethod) ]
+	self actionMethodDropList.
+	self actionRemoveMethodButton.
+	self actionSaveMethodButton.
+	removeSettingButton
+		action: [ 
+			settingsDropList selectedItem
+				ifNil: [self inform: 'please select a confguration' ]
+				ifNotNil: [ :selectedItem |
+					settingsDropList
+						items:
+							(settingsDropList listItems asOrderedCollection 
+								remove: selectedItem; yourself).
+					(methodProvider class >> selectedItem selector) removeFromSystem ].
+			settingsDropList selectedIndex: 1 ]
 ]
 
 { #category : #initialization }
@@ -290,7 +316,6 @@ BISettingPreviewer2 >> settingsTree [
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupAfterPrettyPrinterCodePresenter [
 	afterPrettyPrintTextPresenter withSyntaxHighlight.
-	1halt.
 	(methodDropList selectedItem isNil
 		or: [ settingsDropList selectedItem isNil ])
 		ifTrue: [ ^ self ].
@@ -357,7 +382,7 @@ BISettingPreviewer2 >> setupSettingsDropList [
 	formaterPrettyPrinter
 		installNewContext:
 			(selectedSetting
-				valueWithReceiver: selectedSetting classBinding
+				valueWithReceiver: selectedSetting origin
 				arguments: #())
 ]
 

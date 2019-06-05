@@ -80,14 +80,13 @@ BISettingPreviewerTest >> testClickOnRemoveMethodButtonShouldRemoveTheFromMethod
 
 { #category : #tests }
 BISettingPreviewerTest >> testClickOnSaveMethodButtonShouldAddToMethodDropListAndToTheMethodProviderClass [
-	[ biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
-	biSettingPreviewer beforePrettyPrintTextPresenter
+	[ biSettingPreviewer beforePrettyPrintTextPresenter
 		text: 'myMethodTestazert ' , String cr , '^ klm'.
 	biSettingPreviewer saveMethodButton click.
 	self
 		assert:
 			(biSettingPreviewer methodDropList listItems
-				contains: [ :item | item selector = #myMethodTestazert ]).
+				anySatisfy: [ :item | item selector = #myMethodTestazert ]).
 	self
 		assert: biSettingPreviewer methodDropList selectedItem
 		equals: BIUseForTest >> #myMethodTestazert.
@@ -119,9 +118,43 @@ BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedIte
 		equals: biSettingPreviewer methodDropList selectedItem sourceCode
 ]
 
+{ #category : #initialization }
+BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSettingDropListAndFromProvideMethodClass [
+	[ | compiledMethod |
+	compiledMethod := BIUseForTest class
+		>>
+			(BIUseForTest class
+				compile:
+					'myConfigForTest' , String cr
+						, '^ (BIPrettyPrinterContext new indent: 10;yourself)').
+	compiledMethod protocol: 'settings'.
+	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
+	biSettingPreviewer settingsDropList
+		selectedIndex:
+			(biSettingPreviewer settingsDropList listItems
+				indexOf: BIUseForTest class >> #myConfigForTest).
+	biSettingPreviewer removeSettingButton click.
+	self
+		deny:
+			(biSettingPreviewer settingsDropList listItems
+				anySatisfy: [ :item | item selector = #myConfigForTest ]).
+	self
+		deny:
+			(BIUseForTest class methods
+				anySatisfy: [ :item | item selector = #myConfigForTest ]) ]
+		ensure: [ [ (BIUseForTest class >> #myConfigForTest) removeFromSystem ]
+				on: KeyNotFound
+				do: [  ] ]
+]
+
 { #category : #tests }
 BISettingPreviewerTest >> testWhenDropListSelectionChangedShouldBeforePrettyContainTheSelectedMethod [
 	biSettingPreviewer methodDropList selectedIndex: 2.
 	self assert: biSettingPreviewer beforePrettyPrintTextPresenter text 
 	equals: biSettingPreviewer methodDropList selectedItem sourceCode
+]
+
+{ #category : #initialization }
+BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContextOfPrettyPrinter [
+	self fail.
 ]
