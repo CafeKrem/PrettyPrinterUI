@@ -14,6 +14,9 @@ Class {
 		'saveSettingButton',
 		'methodProvider'
 	],
+	#classInstVars : [
+		'methodProvider'
+	],
 	#category : #MigratePrettyPrinterUI
 }
 
@@ -59,17 +62,23 @@ BISettingPreviewer2 class >> dialogOpenBIPreviewer [
 			self buildOpenBIInspectorButton}
 ]
 
+{ #category : #accessing }
+BISettingPreviewer2 class >> methodProvider [
+	^ methodProvider
+]
+
 { #category : #'instance creation' }
 BISettingPreviewer2 class >> open [
 	<script>
+	methodProvider := BIMethodProvider.
 	self new openWithSpec 
 ]
 
 { #category : #'instance creation' }
 BISettingPreviewer2 class >> open: aClass [
 	| presenter |
-	presenter := self new
-		methodProvider: aClass; yourself.
+	methodProvider := aClass.
+	presenter := self new.
 	presenter openWithSpec.
 	^ presenter
 ]
@@ -129,7 +138,7 @@ BISettingPreviewer2 >> chooseMethodUI [
 
 { #category : #initialization }
 BISettingPreviewer2 >> defaultMethodProvider [
-	methodProvider := BIMethodProvider 
+	methodProvider := self class methodProvider 
 ]
 
 { #category : #'item creation' }

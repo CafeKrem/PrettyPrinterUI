@@ -63,19 +63,19 @@ BISettingPreviewerTest >> testClickChooseMethodButtonAndAcceptWithNotNilMethodSh
 
 { #category : #tests }
 BISettingPreviewerTest >> testClickOnRemoveMethodButtonShouldRemoveTheFromMethodDropList [
-	[ BIMethodProvider 
+	[ BIUseForTest  
 		compile: 'myMethodTestazert ' , String cr , '^ klm'.
-		(BIMethodProvider  >> #myMethodTestazert) protocol: 'methods'.
+		(BIUseForTest   >> #myMethodTestazert) protocol: 'methods'.
 	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
 	biSettingPreviewer methodDropList
 		selectedIndex:
-			(biSettingPreviewer methodDropList listItems indexOf: (BIMethodProvider>>#myMethodTestazert)).
+			(biSettingPreviewer methodDropList listItems indexOf: (BIUseForTest>>#myMethodTestazert)).
 	biSettingPreviewer removeMethodButton click.
 	self
 		deny:
 			(biSettingPreviewer methodDropList listItems
 				contains: [ :item | item selector = #myMethodTestazert ]) ]
-		ensure: [ [ (BIChooseMethodUI class >> #myMethodTestazert) removeFromSystem ]
+		ensure: [ [ (BIUseForTest >> #myMethodTestazert) removeFromSystem ]
 				on: KeyNotFound
 				do: [  ] ]
 ]
