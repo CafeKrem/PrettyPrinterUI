@@ -200,8 +200,8 @@ BISettingPreviewer2 >> initializeWidgets [
 	self setupRemoveSettingButton.
 	self setupSaveSettingButton.
 	self setupSettingsDropList.
-	self setupSettingsTree.
 	self setupMethoDropList.
+	self setupSettingsTree.
 	self setupChooseMethodUI.
 	self setupBeforePrettyPrinterCodePresenter.
 	self setupAfterPrettyPrinterCodePresenter.
@@ -266,7 +266,8 @@ BISettingPreviewer2 >> setupAfterPrettyPrinterCodePresenter [
 
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupBeforePrettyPrinterCodePresenter [
-	beforePrettyPrintTextPresenter withSyntaxHighlight
+	beforePrettyPrintTextPresenter
+		withSyntaxHighlight; text: methodDropList selectedItem sourceCode
 ]
 
 { #category : #'initialization widgets' }

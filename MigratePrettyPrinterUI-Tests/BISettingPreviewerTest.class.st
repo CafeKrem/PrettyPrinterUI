@@ -85,6 +85,13 @@ BISettingPreviewerTest >> testDropListSelectedIndexShouldBeEqualsToOne [
 	self assert: biSettingPreviewer methodDropList selectedIndex equals: 1.
 ]
 
+{ #category : #initialization }
+BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedItemOfDropListPresenter [
+	self
+		assert: biSettingPreviewer beforePrettyPrintTextPresenter text
+		equals: biSettingPreviewer methodDropList selectedItem sourceCode
+]
+
 { #category : #tests }
 BISettingPreviewerTest >> testWhenDropListSelectionChangedShouldBeforePrettyContainTheSelectedMethod [
 	biSettingPreviewer methodDropList selectedIndex: 2.
