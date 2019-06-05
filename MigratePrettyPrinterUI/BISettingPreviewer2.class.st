@@ -179,7 +179,18 @@ BISettingPreviewer2 >> initializePresenter [
 						removeAt: methodDropList selectedIndex; yourself).
 			selectedItem removeFromSystem.
 			methodDropList selectedIndex: 1.
-			self updateAllWidgets ]
+			self updateAllWidgets ].
+	saveMethodButton
+		action: [ | newMethod |
+			newMethod :=methodProvider >> (methodProvider
+				compile: beforePrettyPrintTextPresenter text).
+			newMethod protocol: 'methods'.
+			methodDropList
+				items:
+					(methodDropList listItems
+						add: newMethod; yourself).
+			methodDropList
+				selectedIndex: (methodDropList listItems indexOf: newMethod) ]
 ]
 
 { #category : #initialization }
@@ -195,7 +206,7 @@ BISettingPreviewer2 >> initializeWidgets [
 	removeMethodButton := self newButton.
 	saveSettingButton := self newButton.
 	removeSettingButton := self newButton.
-	self setupSaveMethoButton.
+	self setupSaveMethodButton.
 	self setupRemoveMethodButton.
 	self setupRemoveSettingButton.
 	self setupSaveSettingButton.
@@ -293,12 +304,6 @@ BISettingPreviewer2 >> setupRemoveMethodButton [
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupRemoveSettingButton [
 	removeSettingButton label: 'remove setting'
-]
-
-{ #category : #'initialization widgets' }
-BISettingPreviewer2 >> setupSaveMethoButton [
-	saveMethodButton label: 'save method';
-	action: [ ]
 ]
 
 { #category : #'initialization widgets' }

@@ -80,9 +80,38 @@ BISettingPreviewerTest >> testClickOnRemoveMethodButtonShouldRemoveTheFromMethod
 				do: [  ] ]
 ]
 
+{ #category : #tests }
+BISettingPreviewerTest >> testClickOnSaveMethodButtonShouldAddToMethodDropListAndToTheMethodProviderClass [
+	[ biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
+	biSettingPreviewer beforePrettyPrintTextPresenter
+		text: 'myMethodTestazert ' , String cr , '^ klm'.
+	biSettingPreviewer saveMethodButton click.
+	self
+		assert:
+			(biSettingPreviewer methodDropList listItems
+				contains: [ :item | item selector = #myMethodTestazert ]).
+	self
+		assert: biSettingPreviewer methodDropList selectedItem
+		equals: BIUseForTest >> #myMethodTestazert.
+	self
+		assert: (BIUseForTest >> #myMethodTestazert) category
+		equals: 'methods' ]
+		ensure: [ [ (BIUseForTest >> #myMethodTestazert) removeFromSystem ]
+				on: KeyNotFound
+				do: [ self fail ] ]
+]
+
 { #category : #initialization }
 BISettingPreviewerTest >> testDropListSelectedIndexShouldBeEqualsToOne [
 	self assert: biSettingPreviewer methodDropList selectedIndex equals: 1.
+]
+
+{ #category : #initialization }
+BISettingPreviewerTest >> testInitializeAfterPrettyShouldFillWithTheSelectedItemOfDropListPresenter [
+	self fail.
+	self
+		assert: biSettingPreviewer afterPrettyPrintTextPresenter
+		equals: biSettingPreviewer methodDropList selectedItem sourceCode
 ]
 
 { #category : #initialization }
