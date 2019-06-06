@@ -115,11 +115,24 @@ BISettingPreviewer2 class >> settingsOn: aBuilder [
 
 { #category : #visiting }
 BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
-	self flag: #whenConfigMigrate.
 	anInstanceOFBIChooseMethodUI methodList selection selectedItem
 		ifNil: [ self inform: 'you have to select a method' ]
 		ifNotNil:
 			[ :selectedItem | beforePrettyPrintTextPresenter text: selectedItem sourceCode ]
+]
+
+{ #category : #visiting }
+BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
+	|stream newSettingString newSettingMethod |
+	newSettingString := STON toStringPretty: BIConfigurableFormatter defaultPrettyPrintContext. 
+	stream := String new writeStream.
+	stream nextPutAll: (aBICodePresenter codePresenter text , String cr ).
+	1 halt.
+	stream nextPutAll:('^ ' ,'''' ,newSettingString  ,'''') .
+	newSettingMethod := methodProvider class >> (methodProvider class compile: stream contents).
+	newSettingMethod  protocol: 'settings'.
+	settingsDropList items: (settingsDropList listItems add: newSettingMethod;yourself).
+	settingsDropList selectedIndex: 1.
 ]
 
 { #category : #initialization }
