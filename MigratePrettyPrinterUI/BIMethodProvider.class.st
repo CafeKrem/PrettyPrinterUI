@@ -15,7 +15,7 @@ Class {
 
 { #category : #settings }
 BIMethodProvider class >> myConfigTest [
-	
+	^ BIPrettyPrinterContext new
 ]
 
 { #category : #methods }
@@ -29,14 +29,11 @@ BIMethodProvider class >> yodaPrettyPrint [
 ]
 
 { #category : #methods }
-BIMethodProvider class >> yodaPrettyPrint2 [
-	^ 'Le côté obscur de la Force, redouter tu dois.'
+BIMethodProvider >> yodaPrettyPrint [
+	^ 'Quand 900 ans comme moi tu auras' , 
 	
 	
 	
 	
-	
-	
-	" kjlm km km kmlk plmk ml"
-	
+	', moins en forme tu seras. '
 ]
