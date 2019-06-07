@@ -123,16 +123,22 @@ BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
 
 { #category : #visiting }
 BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
-	|stream newSettingString newSettingMethod |
-	newSettingString := STON toStringPretty: BIConfigurableFormatter defaultPrettyPrintContext. 
-	stream := String new writeStream.
-	stream nextPutAll: (aBICodePresenter codePresenter text , String cr ).
-	1 halt.
-	stream nextPutAll:('^ ' ,'''' ,newSettingString  ,'''') .
-	newSettingMethod := methodProvider class >> (methodProvider class compile: stream contents).
-	newSettingMethod  protocol: 'settings'.
-	settingsDropList items: (settingsDropList listItems add: newSettingMethod;yourself).
-	settingsDropList selectedIndex: 1.
+	| string newSettingString newSettingMethod |
+	string := String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: aBICodePresenter codePresenter text; cr; tab; nextPutAll: '^ '. 
+					
+					(STON
+						toStringPretty: BIConfigurableFormatter defaultPrettyPrintContext) storeOn: stream  ].
+	newSettingMethod := methodProvider class
+		>> (methodProvider class compile: string).
+	newSettingMethod protocol: 'settings'.
+	settingsDropList
+		items:
+			(settingsDropList listItems
+				add: newSettingMethod; yourself).
+	settingsDropList selectedIndex: 1
 ]
 
 { #category : #initialization }

@@ -150,15 +150,22 @@ BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSe
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenClickOnSaveSettingButtonShouldCreateMethodClassSideWithProcolSettingsAndAddToSettingsDropList [
 	| codePresenterUI |
-	
-	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
-	codePresenterUI presenter codePresenter text:'myConfigTest'.
+	[ codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
+	codePresenterUI presenter codePresenter text: 'myConfigTest'.
 	codePresenterUI triggerOkAction.
 	self
 		assert: [ biSettingPreviewer settingsDropList listItems
 				anySatisfy: [ :item | item selector = #myConfigTest ] ].
-	self assert: biSettingPreviewer settingsDropList selectedIndex equals: 1.
-	self assert: (biSettingPreviewer methodProvider class methods anySatisfy: [:item |item selector = #myConfigTest   ]).
+	self
+		assert: biSettingPreviewer settingsDropList selectedIndex
+		equals: 1.
+	self
+		assert:
+			(biSettingPreviewer methodProvider class methods
+				anySatisfy: [ :item | item selector = #myConfigTest ]) ]
+		ensure: [ (biSettingPreviewer methodProvider class >> #myConfigTest)
+				removeFromSystem.
+				 ]
 ]
 
 { #category : #tests }
