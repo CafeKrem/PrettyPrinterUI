@@ -19,7 +19,7 @@ BIUseForTest class >> myConfigTest [
 	#indentString : ''\t'',
 	#indentsForKeywords : 1,
 	#keepBlockInMessage : true,
-	#lineUpBlockBrackets : false,
+	#lineUpBlockBrackets : true,
 	#maxLineLength : 70,
 	#methodSignatureOnMultipleLines : false,
 	#minimumNewLinesBetweenStatements : 1,

@@ -87,7 +87,7 @@ BISettingPreviewer2 class >> open: aClass [
 { #category : #'button behavior' }
 BISettingPreviewer2 class >> openBIInspectorButtonAction [
 	<script>
-	BISettingPreviewer new openWithSpec
+	self open
 ]
 
 { #category : #'button behavior' }
@@ -145,7 +145,9 @@ BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
 BISettingPreviewer2 >> actionMethodDropList [
 	methodDropList
 		transmitTo: beforePrettyPrintTextPresenter
-		transform: [ :method | method sourceCode ]
+		transform: [ :method | method sourceCode ].
+	methodDropList 
+		transmitTo: afterPrettyPrintTextPresenter  transform:[:item|self formatPrettyPrint] 
 ]
 
 { #category : #'initialization-actions' }
@@ -180,7 +182,6 @@ BISettingPreviewer2 >> actionRemoveSettingButton [
 BISettingPreviewer2 >> actionSaveMethodButton [
 	saveMethodButton
 		action: [ | newMethod |
-			1 halt.
 			newMethod := methodProvider
 				>> (methodProvider compile: beforePrettyPrintTextPresenter text).
 			newMethod protocol: 'methods'.
@@ -332,6 +333,16 @@ BISettingPreviewer2 >> removeMethodButton [
 { #category : #accessing }
 BISettingPreviewer2 >> removeSettingButton [
 	^ removeSettingButton
+]
+
+{ #category : #'initialization-actions' }
+BISettingPreviewer2 >> sactionMethodDropList [
+	methodDropList
+		transmitTo: beforePrettyPrintTextPresenter
+		transform: [ :method | method sourceCode ].
+	methodDropList
+		transmitTo: afterPrettyPrintTextPresenter
+		transform: [ :item | self format ]
 ]
 
 { #category : #accessing }
