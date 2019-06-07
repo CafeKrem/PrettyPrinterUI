@@ -170,5 +170,11 @@ BISettingPreviewerTest >> testWhenDropListSelectionChangedShouldBeforePrettyCont
 
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContextOfPrettyPrinter [
-	self fail.
+	biSettingPreviewer settingsDropList
+		selectedIndex:
+			(biSettingPreviewer settingsDropList listItems
+				indexOf: biSettingPreviewer methodProvider class >> #myConfigTest2).
+	self
+		deny: biSettingPreviewer afterPrettyPrintTextPresenter text
+		equals: biSettingPreviewer formatPrettyPrint
 ]

@@ -123,16 +123,22 @@ BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
 
 { #category : #visiting }
 BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
-	|stream newSettingString newSettingMethod |
-	newSettingString := STON toStringPretty: BIConfigurableFormatter defaultPrettyPrintContext. 
-	stream := String new writeStream.
-	stream nextPutAll: (aBICodePresenter codePresenter text , String cr ).
-	1 halt.
-	stream nextPutAll:('^ ' ,'''' ,newSettingString  ,'''') .
-	newSettingMethod := methodProvider class >> (methodProvider class compile: stream contents).
-	newSettingMethod  protocol: 'settings'.
-	settingsDropList items: (settingsDropList listItems add: newSettingMethod;yourself).
-	settingsDropList selectedIndex: 1.
+	| string newSettingString newSettingMethod |
+	string := String
+		streamContents: [ :stream | 
+			stream
+				nextPutAll: aBICodePresenter codePresenter text; cr; tab; nextPutAll: '^ '. 
+					
+					(STON
+						toStringPretty: BIConfigurableFormatter defaultPrettyPrintContext) storeOn: stream  ].
+	newSettingMethod := methodProvider class
+		>> (methodProvider class compile: string).
+	newSettingMethod protocol: 'settings'.
+	settingsDropList
+		items:
+			(settingsDropList listItems
+				add: newSettingMethod; yourself).
+	settingsDropList selectedIndex: 1
 ]
 
 { #category : #initialization }
@@ -157,6 +163,20 @@ BISettingPreviewer2 >> actionRemoveMethodButton [
 ]
 
 { #category : #initialization }
+BISettingPreviewer2 >> actionRemoveSettingButton [
+	removeSettingButton
+		action: [ settingsDropList selectedItem
+				ifNil: [ self inform: 'please select a confguration' ]
+				ifNotNil: [ :selectedItem | 
+					settingsDropList
+						items:
+							(settingsDropList listItems asOrderedCollection
+								remove: selectedItem; yourself).
+					(methodProvider class >> selectedItem selector) removeFromSystem ].
+			settingsDropList selectedIndex: 1 ]
+]
+
+{ #category : #initialization }
 BISettingPreviewer2 >> actionSaveMethodButton [
 	saveMethodButton
 		action: [ | newMethod |
@@ -169,6 +189,11 @@ BISettingPreviewer2 >> actionSaveMethodButton [
 						add: newMethod; yourself).
 			methodDropList
 				selectedIndex: (methodDropList listItems indexOf: newMethod) ]
+]
+
+{ #category : #initialization }
+BISettingPreviewer2 >> actionSaveSettingButton [
+	saveSettingButton action: [ BIInputPresenterUI openOn: self ]
 ]
 
 { #category : #accessing }
@@ -230,17 +255,15 @@ BISettingPreviewer2 >> initializePresenter [
 	self actionMethodDropList.
 	self actionRemoveMethodButton.
 	self actionSaveMethodButton.
-	removeSettingButton
-		action: [ 
-			settingsDropList selectedItem
-				ifNil: [self inform: 'please select a confguration' ]
-				ifNotNil: [ :selectedItem |
-					settingsDropList
-						items:
-							(settingsDropList listItems asOrderedCollection 
-								remove: selectedItem; yourself).
-					(methodProvider class >> selectedItem selector) removeFromSystem ].
-			settingsDropList selectedIndex: 1 ]
+	self actionRemoveSettingButton.
+	self actionSaveSettingButton.
+	settingsDropList
+		whenSelectionChangedDo: [ :setting | 
+			formaterPrettyPrinter
+				installNewContext:
+					(STON
+						fromString: (setting selectedItem model valueWithReceiver: methodProvider arguments: #())).
+				afterPrettyPrintTextPresenter text: self formatPrettyPrint. ]
 ]
 
 { #category : #initialization }
