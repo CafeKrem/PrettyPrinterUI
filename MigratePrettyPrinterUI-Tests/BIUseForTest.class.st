@@ -4,16 +4,6 @@ Class {
 	#category : #'MigratePrettyPrinterUI-Tests'
 }
 
-{ #category : #settings }
-BIUseForTest class >> basicConfig [ 
-	^ BIPrettyPrinterContext new
-]
-
-{ #category : #settings }
-BIUseForTest class >> config1 [ 
-	^ BIPrettyPrinterContext new
-]
-
 { #category : #methods }
 BIUseForTest class >> kklm [
 ]
@@ -29,7 +19,7 @@ BIUseForTest class >> myConfigTest [
 	#indentString : ''\t'',
 	#indentsForKeywords : 1,
 	#keepBlockInMessage : true,
-	#lineUpBlockBrackets : false,
+	#lineUpBlockBrackets : true,
 	#maxLineLength : 70,
 	#methodSignatureOnMultipleLines : false,
 	#minimumNewLinesBetweenStatements : 1,

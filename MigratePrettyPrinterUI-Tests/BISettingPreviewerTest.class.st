@@ -40,6 +40,7 @@ BISettingPreviewerTest >> setUp [
 { #category : #running }
 BISettingPreviewerTest >> tearDown [ 
 	biSettingPreviewer delete.
+	biSettingPreviewer application close.
 	super tearDown
 ]
 
@@ -120,14 +121,11 @@ BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedIte
 
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSettingDropListAndFromProvideMethodClass [
-	[ | compiledMethod |
-	compiledMethod := BIUseForTest class
-		>>
-			(BIUseForTest class
-				compile:
-					'myConfigForTest' , String cr
-						, '^ (BIPrettyPrinterContext new indent: 10;yourself)').
-	compiledMethod protocol: 'settings'.
+	[ | compiledMethod codePresenterUI|
+	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
+	codePresenterUI presenter codePresenter text:'myConfigForTest'.
+	codePresenterUI triggerOkAction.
+	codePresenterUI delete.
 	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
 	biSettingPreviewer settingsDropList
 		selectedIndex:

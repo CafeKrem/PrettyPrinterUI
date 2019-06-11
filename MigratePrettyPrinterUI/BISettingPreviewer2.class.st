@@ -87,7 +87,7 @@ BISettingPreviewer2 class >> open: aClass [
 { #category : #'button behavior' }
 BISettingPreviewer2 class >> openBIInspectorButtonAction [
 	<script>
-	BISettingPreviewer new openWithSpec
+	self open
 ]
 
 { #category : #'button behavior' }
@@ -141,14 +141,16 @@ BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
 	settingsDropList selectedIndex: 1
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionMethodDropList [
 	methodDropList
 		transmitTo: beforePrettyPrintTextPresenter
-		transform: [ :method | method sourceCode ]
+		transform: [ :method | method sourceCode ].
+	methodDropList 
+		transmitTo: afterPrettyPrintTextPresenter  transform:[:item|self formatPrettyPrint] 
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionRemoveMethodButton [
 	removeMethodButton
 		action: [ | selectedItem |
@@ -162,7 +164,7 @@ BISettingPreviewer2 >> actionRemoveMethodButton [
 			self updateAllWidgets ]
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionRemoveSettingButton [
 	removeSettingButton
 		action: [ settingsDropList selectedItem
@@ -176,7 +178,7 @@ BISettingPreviewer2 >> actionRemoveSettingButton [
 			settingsDropList selectedIndex: 1 ]
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionSaveMethodButton [
 	saveMethodButton
 		action: [ | newMethod |
@@ -191,9 +193,24 @@ BISettingPreviewer2 >> actionSaveMethodButton [
 				selectedIndex: (methodDropList listItems indexOf: newMethod) ]
 ]
 
-{ #category : #initialization }
+{ #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionSaveSettingButton [
 	saveSettingButton action: [ BIInputPresenterUI openOn: self ]
+]
+
+{ #category : #'initialization-actions' }
+BISettingPreviewer2 >> actionSettingDropList [
+	settingsDropList
+		whenSelectionChangedDo: [ :setting | 
+			formaterPrettyPrinter
+				installNewContext:
+					(STON
+						fromString:
+							(setting selectedItem model
+								valueWithReceiver: methodProvider
+								arguments: #())).
+			afterPrettyPrintTextPresenter text: self formatPrettyPrint
+			]
 ]
 
 { #category : #accessing }
@@ -257,13 +274,7 @@ BISettingPreviewer2 >> initializePresenter [
 	self actionSaveMethodButton.
 	self actionRemoveSettingButton.
 	self actionSaveSettingButton.
-	settingsDropList
-		whenSelectionChangedDo: [ :setting | 
-			formaterPrettyPrinter
-				installNewContext:
-					(STON
-						fromString: (setting selectedItem model valueWithReceiver: methodProvider arguments: #())).
-				afterPrettyPrintTextPresenter text: self formatPrettyPrint. ]
+	self actionSettingDropList
 ]
 
 { #category : #initialization }
@@ -299,11 +310,6 @@ BISettingPreviewer2 >> initializeWidgets [
 			add: afterPrettyPrintTextPresenter
 ]
 
-{ #category : #api }
-BISettingPreviewer2 >> installContext: aContext [
-	formaterPrettyPrinter installNewContext: aContext
-]
-
 { #category : #accessing }
 BISettingPreviewer2 >> methodDropList [
 	^ methodDropList
@@ -327,6 +333,16 @@ BISettingPreviewer2 >> removeMethodButton [
 { #category : #accessing }
 BISettingPreviewer2 >> removeSettingButton [
 	^ removeSettingButton
+]
+
+{ #category : #'initialization-actions' }
+BISettingPreviewer2 >> sactionMethodDropList [
+	methodDropList
+		transmitTo: beforePrettyPrintTextPresenter
+		transform: [ :method | method sourceCode ].
+	methodDropList
+		transmitTo: afterPrettyPrintTextPresenter
+		transform: [ :item | self format ]
 ]
 
 { #category : #accessing }
@@ -360,7 +376,8 @@ BISettingPreviewer2 >> setupAfterPrettyPrinterCodePresenter [
 
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupBeforePrettyPrinterCodePresenter [
-	beforePrettyPrintTextPresenter withSyntaxHighlight.
+	beforePrettyPrintTextPresenter
+		withSyntaxHighlight; autoAccept: true.
 	methodDropList selectedItem ifNil: [ ^ self ].
 	beforePrettyPrintTextPresenter
 		text: methodDropList selectedItem sourceCode
@@ -417,9 +434,11 @@ BISettingPreviewer2 >> setupSettingsDropList [
 	selectedSetting := settingsDropList selectedItem.
 	formaterPrettyPrinter
 		installNewContext:
-			(selectedSetting
-				valueWithReceiver: selectedSetting origin
-				arguments: #())
+			(STON
+				fromString:
+					(selectedSetting
+						valueWithReceiver: selectedSetting origin
+						arguments: #()))
 ]
 
 { #category : #'initialization widgets' }
