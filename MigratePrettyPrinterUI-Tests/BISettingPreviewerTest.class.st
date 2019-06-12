@@ -121,7 +121,7 @@ BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedIte
 
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSettingDropListAndFromProvideMethodClass [
-	[ | compiledMethod codePresenterUI|
+	[ | codePresenterUI|
 	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
 	codePresenterUI presenter codePresenter text:'myConfigForTest'.
 	codePresenterUI triggerOkAction.

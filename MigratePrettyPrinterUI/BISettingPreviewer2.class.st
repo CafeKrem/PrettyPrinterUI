@@ -138,7 +138,6 @@ BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
 		items:
 			(settingsDropList listItems
 				add: newSettingMethod; yourself).
-	settingsDropList selectedIndex: 1
 ]
 
 { #category : #'initialization-actions' }
@@ -146,8 +145,9 @@ BISettingPreviewer2 >> actionMethodDropList [
 	methodDropList
 		transmitTo: beforePrettyPrintTextPresenter
 		transform: [ :method | method sourceCode ].
-	methodDropList 
-		transmitTo: afterPrettyPrintTextPresenter  transform:[:item|self formatPrettyPrint] 
+	methodDropList
+		transmitTo: afterPrettyPrintTextPresenter
+		transform: [ :item | self formatPrettyPrint ]
 ]
 
 { #category : #'initialization-actions' }
@@ -167,15 +167,16 @@ BISettingPreviewer2 >> actionRemoveMethodButton [
 { #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionRemoveSettingButton [
 	removeSettingButton
-		action: [ settingsDropList selectedItem
+		action: [ 
+			settingsDropList selectedItem
 				ifNil: [ self inform: 'please select a confguration' ]
 				ifNotNil: [ :selectedItem | 
+					settingsDropList selectedIndex: 1.
 					settingsDropList
 						items:
-							(settingsDropList listItems asOrderedCollection
+							(settingsDropList listItems 
 								remove: selectedItem; yourself).
-					(methodProvider class >> selectedItem selector) removeFromSystem ].
-			settingsDropList selectedIndex: 1 ]
+					(methodProvider class >> selectedItem selector) removeFromSystem ] ]
 ]
 
 { #category : #'initialization-actions' }
@@ -301,13 +302,13 @@ BISettingPreviewer2 >> initializeWidgets [
 	self setupChooseMethodUI.
 	self setupBeforePrettyPrinterCodePresenter.
 	self setupAfterPrettyPrinterCodePresenter.
-	SystemAnnouncer uniqueInstance weak
+	"SystemAnnouncer uniqueInstance weak
 		when: BISettingsChanged
 		send: #whenASettingChanged
-		to: self.
+		to: self."
 	self focusOrder
 		add: settingsTree; add: chooseMethodUI; add: methodDropList; add: beforePrettyPrintTextPresenter; 
-			add: afterPrettyPrintTextPresenter
+			add: afterPrettyPrintTextPresenter.
 ]
 
 { #category : #accessing }
@@ -333,16 +334,6 @@ BISettingPreviewer2 >> removeMethodButton [
 { #category : #accessing }
 BISettingPreviewer2 >> removeSettingButton [
 	^ removeSettingButton
-]
-
-{ #category : #'initialization-actions' }
-BISettingPreviewer2 >> sactionMethodDropList [
-	methodDropList
-		transmitTo: beforePrettyPrintTextPresenter
-		transform: [ :method | method sourceCode ].
-	methodDropList
-		transmitTo: afterPrettyPrintTextPresenter
-		transform: [ :item | self format ]
 ]
 
 { #category : #accessing }
