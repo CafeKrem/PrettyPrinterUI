@@ -207,3 +207,8 @@ BISettingPreviewerTest >> testWhenWeDelateAMethodInBrowserShouldRemoveThisOneFro
 				compile: 'useForTestWillBeRemove' , String cr , '^ ''klmklm'' '
 			]
 ]
+
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenWeModifiedAMethodInBrowserShouldModifieBeforePrettyPrintTextPresenter [
+	self fail
+]

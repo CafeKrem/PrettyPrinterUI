@@ -13,7 +13,8 @@ Class {
 		'removeSettingButton',
 		'saveSettingButton',
 		'methodProvider',
-		'formaterPrettyPrinter'
+		'formaterPrettyPrinter',
+		'isSettingModification'
 	],
 	#classInstVars : [
 		'methodProvider'
@@ -124,6 +125,7 @@ BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
 { #category : #visiting }
 BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
 	| string newSettingMethod |
+	isSettingModification := true.
 	string := String
 		streamContents: [ :stream | 
 			stream
@@ -137,7 +139,13 @@ BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
 			].
 	newSettingMethod := methodProvider class
 		>> (methodProvider class compile: string).
-	newSettingMethod protocol: 'settings'
+	newSettingMethod protocol: 'settings'.
+	settingsDropList
+		items:
+			(settingsDropList listItems
+				add: newSettingMethod;
+				yourself).
+	isSettingModification := false
 ]
 
 { #category : #'initialization-actions' }
@@ -162,9 +170,18 @@ BISettingPreviewer2 >> actionRemoveMethodButton [
 { #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionRemoveSettingButton [
 	removeSettingButton
-		action: [ settingsDropList selectedItem
+		action: [ isSettingModification := true.
+			settingsDropList selectedItem
 				ifNil: [ self inform: 'please select a confguration' ]
-				ifNotNil: [ :selectedItem | selectedItem removeFromSystem ]
+				ifNotNil: [ :selectedItem | 
+					selectedItem removeFromSystem.
+					settingsDropList
+						items:
+							(settingsDropList listItems
+								remove: selectedItem;
+								yourself)
+					].
+			isSettingModification := false
 			]
 ]
 
@@ -203,6 +220,11 @@ BISettingPreviewer2 >> actionSettingDropList [
 { #category : #accessing }
 BISettingPreviewer2 >> afterPrettyPrintTextPresenter [
 	^ afterPrettyPrintTextPresenter
+]
+
+{ #category : #accessing }
+BISettingPreviewer2 >> banane [
+	3
 ]
 
 { #category : #accessing }
@@ -252,11 +274,6 @@ BISettingPreviewer2 >> formaterPrettyPrinter [
 { #category : #api }
 BISettingPreviewer2 >> initialExtent [
 	^ 1000 @ 700
-]
-
-{ #category : #initialization }
-BISettingPreviewer2 >> initialize [
-	super initialize
 ]
 
 { #category : #initialization }
@@ -312,15 +329,16 @@ BISettingPreviewer2 >> initializeWidgets [
 
 { #category : #'system-Announcement' }
 BISettingPreviewer2 >> methodAdded: aMethodAdded [
-	
-	(aMethodAdded methodOrigin = methodProvider
-		or: [ aMethodAdded methodOrigin = methodProvider class ])
+	(isSettingModification not
+		and: [ aMethodAdded methodOrigin = methodProvider
+				or: [ aMethodAdded methodOrigin = methodProvider class ]
+			])
 		ifFalse: [ ^ self ].
 	methodDropList
 		items:
 			(methodDropList listItems
 				add: aMethodAdded method;
-				yourself).
+				yourself)
 ]
 
 { #category : #accessing }
@@ -340,7 +358,8 @@ BISettingPreviewer2 >> methodProvider: anObject [
 
 { #category : #'system-Announcement' }
 BISettingPreviewer2 >> methodRemoved: aMethodRemoved [
-	aMethodRemoved methodOrigin  = methodProvider 
+	(aMethodRemoved methodOrigin = methodProvider
+		and: [ isSettingModification not ])
 		ifFalse: [ ^ self ].
 	methodDropList
 		items:
@@ -487,6 +506,5 @@ BISettingPreviewer2 >> updateAllWidgets [
 
 { #category : #'event handling' }
 BISettingPreviewer2 >> whenASettingChanged [
-	(self formattedCheckBox state and: [ self selectorAndClassAreCorrect ])
-		ifTrue: [ self formatSourceCode ] 
+	afterPrettyPrintTextPresenter text: self formatPrettyPrint 
 ]

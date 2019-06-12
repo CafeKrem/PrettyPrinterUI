@@ -156,6 +156,11 @@ BIUseForTest class >> myConfigTest2 [
 }'
 ]
 
+{ #category : #methods }
+BIUseForTest >> useForTestWillBeModified [
+	^ 'what i have in my hat ?'
+]
+
 { #category : #'as yet unclassified' }
 BIUseForTest >> useForTestWillBeRemove [
 ^ 'klmklm' 
