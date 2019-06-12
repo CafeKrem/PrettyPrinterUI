@@ -139,11 +139,6 @@ BIChooseMethodUI >> methodList [
 	^ methodList
 ]
 
-{ #category : #methods }
-BIChooseMethodUI >> myMethodTestazert [ 
-^ klm
-]
-
 { #category : #accessing }
 BIChooseMethodUI >> packageList [
 	^ packageList
@@ -162,7 +157,7 @@ BIChooseMethodUI >> radioButtonInstanceSide [
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupClassList [
 	classList
-		items: packageList selection selectedItem classes asOrderedCollection;
+		items: (packageList selection selectedItem classes asOrderedCollection sort: [:a :b |a name < b name]);
 		icons: [:item |self iconNamed: #system  ];
 		selectIndex: 1
 ]
@@ -170,15 +165,16 @@ BIChooseMethodUI >> setupClassList [
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupMethodList [
 	methodList
-		items: classList selection selectedItem methods;
+		items: (classList selection selectedItem methods sort: [:a :b |a selector < b selector]);
 		displayBlock: [ :item | item selector ];
 		selectIndex: 1
 ]
 
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupPackageList [
+	
 	packageList
-		items: RPackageOrganizer default packages;
+		items: (RPackageOrganizer default packages sort: [:a :b | a name < b name]);
 		icons: [:item |self iconNamed: #package];
 		displayBlock: [ :item | item name ];
 		selectIndex: 1
