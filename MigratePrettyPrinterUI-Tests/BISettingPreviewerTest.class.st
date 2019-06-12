@@ -183,3 +183,27 @@ BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContex
 		deny: biSettingPreviewer afterPrettyPrintTextPresenter text
 		equals: biSettingPreviewer formatPrettyPrint
 ]
+
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenWeCreatAMethodInBrowserWithTheGoodTagShouldAddThisOneToMethodDropList [
+	[BIUseForTest
+		compile: 'myMethodForTestingAnnouncement' , String cr , '^ ''klmklm'' '.
+	self
+		assert:
+			(biSettingPreviewer methodDropList listItems
+				contains:  [:methodItem |methodItem selector = #myMethodForTestingAnnouncement])]
+			ensure: [(BIUseForTest >>#myMethodForTestingAnnouncement ) removeFromSystem] 
+]
+
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenWeDelateAMethodInBrowserShouldRemoveThisOneFromMethodDropList [
+	[ (BIUseForTest >> #useForTestWillBeRemove) removeFromSystem.
+	self
+		deny:
+			(biSettingPreviewer methodDropList listItems
+				contains: [ :methodItem | methodItem selector = #useForTestWillBeRemove ])
+	]
+		ensure: [ BIUseForTest
+				compile: 'useForTestWillBeRemove' , String cr , '^ ''klmklm'' '
+			]
+]

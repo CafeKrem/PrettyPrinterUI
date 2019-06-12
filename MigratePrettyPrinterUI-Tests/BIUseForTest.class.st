@@ -155,3 +155,8 @@ BIUseForTest class >> myConfigTest2 [
 	]
 }'
 ]
+
+{ #category : #'as yet unclassified' }
+BIUseForTest >> useForTestWillBeRemove [
+^ 'klmklm' 
+]
