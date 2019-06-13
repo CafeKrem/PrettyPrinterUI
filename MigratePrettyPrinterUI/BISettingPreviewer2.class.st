@@ -175,6 +175,7 @@ BISettingPreviewer2 >> actionRemoveSettingButton [
 				ifNil: [ self inform: 'please select a confguration' ]
 				ifNotNil: [ :selectedItem | 
 					selectedItem removeFromSystem.
+					settingsDropList selectedIndex: 1.
 					settingsDropList
 						items:
 							(settingsDropList listItems
@@ -192,8 +193,7 @@ BISettingPreviewer2 >> actionSaveMethodButton [
 			newMethod := methodProvider
 				>> (methodProvider compile: beforePrettyPrintTextPresenter text).
 			newMethod protocol: 'methods'.
-			methodDropList
-				selectedIndex: (methodDropList listItems indexOf: newMethod)
+			methodDropList selectedIndex: 1
 			]
 ]
 
@@ -277,6 +277,12 @@ BISettingPreviewer2 >> initialExtent [
 ]
 
 { #category : #initialization }
+BISettingPreviewer2 >> initialize [
+	isSettingModification := false.
+	super initialize 
+]
+
+{ #category : #initialization }
 BISettingPreviewer2 >> initializePresenter [
 	self actionMethodDropList.
 	self actionRemoveMethodButton.
@@ -329,10 +335,10 @@ BISettingPreviewer2 >> initializeWidgets [
 
 { #category : #'system-Announcement' }
 BISettingPreviewer2 >> methodAdded: aMethodAdded [
+	isSettingModification ifNil: [ isSettingModification := false ].
 	(isSettingModification not
 		and: [ aMethodAdded methodOrigin = methodProvider
-				or: [ aMethodAdded methodOrigin = methodProvider class ]
-			])
+				or: [ aMethodAdded methodOrigin = methodProvider class ] ])
 		ifFalse: [ ^ self ].
 	methodDropList
 		items:
@@ -361,6 +367,7 @@ BISettingPreviewer2 >> methodRemoved: aMethodRemoved [
 	(aMethodRemoved methodOrigin = methodProvider
 		and: [ isSettingModification not ])
 		ifFalse: [ ^ self ].
+	methodDropList selectedIndex: 1.
 	methodDropList
 		items:
 			(methodDropList listItems
