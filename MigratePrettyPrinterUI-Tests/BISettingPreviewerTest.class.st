@@ -118,6 +118,16 @@ BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedIte
 		equals: biSettingPreviewer methodDropList selectedItem sourceCode
 ]
 
+{ #category : #tests }
+BISettingPreviewerTest >> testTwoSameMethodsGivesTheSameResultAndTheResultShouldChangeWithTheConfiguration [
+	"we save methodLineUp1 when dontLineUpConfig is selected"
+	"we save methodLineUp2 when lineUpConfig is selected"
+	"(BIMethodProvider>>#methodLineUp1)= (BIMethodProvider>>#methodLineUp2 )"
+	
+	"with dontLineUpConfig  the 2 methods should give the same string"
+	"with lineUpConfig  the 2 methods should give the same string"
+]
+
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSettingDropListAndFromProvideMethodClass [
 	[ | codePresenterUI|
