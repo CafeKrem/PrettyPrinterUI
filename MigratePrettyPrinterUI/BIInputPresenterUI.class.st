@@ -36,7 +36,8 @@ BIInputPresenterUI >> initializeDialogWindow: aDialog [
 { #category : #initialization }
 BIInputPresenterUI >> initializeWidgets [ 
 	codePresenter := self instantiate: TextInputFieldPresenter.
-	codePresenter placeholder: 'write the name of you configuration'
+	codePresenter placeholder: 'write the name of you configuration'.
+	codePresenter autoAccept: true
 ]
 
 { #category : #accessing }
