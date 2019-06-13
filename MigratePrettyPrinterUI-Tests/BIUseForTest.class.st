@@ -155,3 +155,13 @@ BIUseForTest class >> myConfigTest2 [
 	]
 }'
 ]
+
+{ #category : #methods }
+BIUseForTest >> useForTestWillBeModified [
+^ 'what i have in my hat ? A Banana'
+]
+
+{ #category : #methods }
+BIUseForTest >> useForTestWillBeRemove [
+^ 'klmklm' 
+]

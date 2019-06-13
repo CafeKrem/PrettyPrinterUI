@@ -74,23 +74,22 @@ BISettingPreviewerTest >> testClickOnRemoveMethodButtonShouldRemoveTheFromMethod
 		deny:
 			(biSettingPreviewer methodDropList listItems
 				contains: [ :item | item selector = #myMethodTestazert ]) ]
-		ensure: [ [ (BIUseForTest >> #myMethodTestazert) removeFromSystem ]
+		ensure: [ [ 
+				(BIUseForTest >> #myMethodTestazert) removeFromSystem ]
 				on: KeyNotFound
 				do: [  ] ]
 ]
 
 { #category : #tests }
 BISettingPreviewerTest >> testClickOnSaveMethodButtonShouldAddToMethodDropListAndToTheMethodProviderClass [
-	[ biSettingPreviewer beforePrettyPrintTextPresenter
+	[ 
+	biSettingPreviewer beforePrettyPrintTextPresenter
 		text: 'myMethodTestazert ' , String cr , '^ klm'.
 	biSettingPreviewer saveMethodButton click.
 	self
 		assert:
 			(biSettingPreviewer methodDropList listItems
 				anySatisfy: [ :item | item selector = #myMethodTestazert ]).
-	self
-		assert: biSettingPreviewer methodDropList selectedItem
-		equals: BIUseForTest >> #myMethodTestazert.
 	self
 		assert: (BIUseForTest >> #myMethodTestazert) category
 		equals: 'methods' ]
@@ -126,7 +125,6 @@ BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSe
 	codePresenterUI presenter codePresenter text:'myConfigForTest'.
 	codePresenterUI triggerOkAction.
 	codePresenterUI delete.
-	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
 	biSettingPreviewer settingsDropList
 		selectedIndex:
 			(biSettingPreviewer settingsDropList listItems
@@ -182,4 +180,51 @@ BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContex
 	self
 		deny: biSettingPreviewer afterPrettyPrintTextPresenter text
 		equals: biSettingPreviewer formatPrettyPrint
+]
+
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenWeCreatAMethodInBrowserWithTheGoodTagShouldAddThisOneToMethodDropList [
+	[
+	BIUseForTest
+		compile: 'myMethodForTestingAnnouncement' , String cr , '^ ''klmklm'' '.
+	self
+		assert:
+			(biSettingPreviewer methodDropList listItems
+				contains:  [:methodItem |methodItem selector = #myMethodForTestingAnnouncement])]
+			ensure: [(BIUseForTest >>#myMethodForTestingAnnouncement ) removeFromSystem] 
+]
+
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenWeDelateAMethodInBrowserShouldRemoveThisOneFromMethodDropList [
+	[
+	(BIUseForTest >> #useForTestWillBeRemove) removeFromSystem.
+	self
+		deny:
+			(biSettingPreviewer methodDropList listItems
+				contains: [ :methodItem | methodItem selector = #useForTestWillBeRemove ])
+	]
+		ensure: [ | newMethod |
+			newMethod := BIUseForTest
+				>>
+					(BIUseForTest
+						compile: 'useForTestWillBeRemove' , String cr , '^ ''klmklm'' ').
+			newMethod protocol: 'methods'
+			]
+]
+
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenWeModifiedAMethodInBrowserShouldModifieBeforePrettyPrintTextPresenter [
+	BIUseForTest
+		compile:
+			'useForTestWillBeModified' , String cr
+				, '^ ''what i have in my hat ? A Banana'''.
+	biSettingPreviewer methodDropList
+		selectedIndex:
+			(biSettingPreviewer methodDropList listItems
+				indexOf: BIUseForTest >> #useForTestWillBeModified).
+	self
+		assert: biSettingPreviewer beforePrettyPrintTextPresenter text
+		equals:
+			'useForTestWillBeModified' , String cr
+				, '^ ''what i have in my hat ? A Banana'''
 ]
