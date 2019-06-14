@@ -119,18 +119,11 @@ BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedIte
 ]
 
 { #category : #tests }
-BISettingPreviewerTest >> testTwoSameMethodsGivesTheSameResultAndTheResultShouldChangeWithTheConfiguration [
-	"we save methodLineUp1 when dontLineUpConfig is selected"
-	"we save methodLineUp2 when lineUpConfig is selected"
-	"(BIMethodProvider>>#methodLineUp1)= (BIMethodProvider>>#methodLineUp2 )"
-	
-	"with dontLineUpConfig  the 2 methods should give the same string"
-	"with lineUpConfig  the 2 methods should give the same string"
-]
-
-{ #category : #tests }
 BISettingPreviewerTest >> testWhenAddNewWithSameAsAnOhterOneShouldRemoveTheOldOneFromTheSettingDropList [
-	| codePresenterUI |
+	[| codePresenterUI |
+	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
+	codePresenterUI presenter codePresenter text: 'testSameNameSetting'.
+	codePresenterUI triggerOkAction.
 	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
 	codePresenterUI presenter codePresenter text: 'testSameNameSetting'.
 	codePresenterUI triggerOkAction.
@@ -139,7 +132,7 @@ BISettingPreviewerTest >> testWhenAddNewWithSameAsAnOhterOneShouldRemoveTheOldOn
 			(biSettingPreviewer settingsDropList listItems
 				count:
 					[ :settingCompiledMethod | settingCompiledMethod selector = #testSameNameSetting ])
-		equals: 1
+		equals: 1]ensure: [(BIUseForTest class >>#testSameNameSetting) removeFromSystem]
 
 ]
 
