@@ -120,7 +120,10 @@ BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedIte
 
 { #category : #tests }
 BISettingPreviewerTest >> testWhenAddNewWithSameAsAnOhterOneShouldRemoveTheOldOneFromTheSettingDropList [
-	| codePresenterUI |
+	[| codePresenterUI |
+	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
+	codePresenterUI presenter codePresenter text: 'testSameNameSetting'.
+	codePresenterUI triggerOkAction.
 	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
 	codePresenterUI presenter codePresenter text: 'testSameNameSetting'.
 	codePresenterUI triggerOkAction.
@@ -129,7 +132,7 @@ BISettingPreviewerTest >> testWhenAddNewWithSameAsAnOhterOneShouldRemoveTheOldOn
 			(biSettingPreviewer settingsDropList listItems
 				count:
 					[ :settingCompiledMethod | settingCompiledMethod selector = #testSameNameSetting ])
-		equals: 1
+		equals: 1]ensure: [(BIUseForTest class >>#testSameNameSetting) removeFromSystem]
 
 ]
 
