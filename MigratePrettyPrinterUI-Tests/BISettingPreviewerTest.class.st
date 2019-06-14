@@ -128,6 +128,21 @@ BISettingPreviewerTest >> testTwoSameMethodsGivesTheSameResultAndTheResultShould
 	"with lineUpConfig  the 2 methods should give the same string"
 ]
 
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenAddNewWithSameAsAnOhterOneShouldRemoveTheOldOneFromTheSettingDropList [
+	| codePresenterUI |
+	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
+	codePresenterUI presenter codePresenter text: 'testSameNameSetting'.
+	codePresenterUI triggerOkAction.
+	self
+		assert:
+			(biSettingPreviewer settingsDropList listItems
+				count:
+					[ :settingCompiledMethod | settingCompiledMethod selector = #testSameNameSetting ])
+		equals: 1
+
+]
+
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSettingDropListAndFromProvideMethodClass [
 	[ | codePresenterUI|

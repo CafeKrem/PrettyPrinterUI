@@ -135,14 +135,15 @@ BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
 				nextPutAll: '^ '.
 			(STON
 				toStringPretty: BIConfigurableFormatter defaultPrettyPrintContext)
-				storeOn: stream
-			].
+				storeOn: stream ].
 	newSettingMethod := methodProvider class
 		>> (methodProvider class compile: string).
 	newSettingMethod protocol: 'settings'.
 	settingsDropList
 		items:
-			(settingsDropList listItems
+			(settingsDropList
+				listItems
+				removeAllSuchThat: [ :item | item selector = newSettingMethod selector ];
 				add: newSettingMethod;
 				yourself).
 	isSettingModification := false
