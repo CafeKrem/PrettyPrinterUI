@@ -192,6 +192,31 @@ BISettingPreviewerTest >> testWhenSaveAMethodShouldBeInstanceSide [
 				do: [ self fail ] ]
 ]
 
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenSaveAModifiedMethodShouldAppearOnlyOnceInMethodPrivider [
+	[ | lastCompileMethod |
+	lastCompileMethod := biSettingPreviewer methodDropList listItems
+		at:
+			(biSettingPreviewer methodDropList listItems
+				indexOf: BIUseForTest >> #useForTestWillBeModified).
+	BIUseForTest
+		compile:
+			'useForTestWillBeModified ' , String cr
+				, '^ ''what i have in my hat ? a banana'''.
+	self
+		assert:
+			(biSettingPreviewer methodDropList listItems
+				count:
+					[ :compiledMethod | compiledMethod selector = #useForTestWillBeModified ])
+		equals: 1.
+	self
+		deny: BIUseForTest >> #useForTestWillBeModified = lastCompileMethod ]
+		ensure: [ BIUseForTest
+				compile:
+					'useForTestWillBeModified ' , String cr
+						, '^ ''what i have in my hat ? ''' ]
+]
+
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContextOfPrettyPrinter [
 	biSettingPreviewer settingsDropList
