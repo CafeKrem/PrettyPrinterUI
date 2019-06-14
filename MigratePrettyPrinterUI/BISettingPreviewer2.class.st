@@ -439,7 +439,7 @@ BISettingPreviewer2 >> setupChooseMethodUI [
 BISettingPreviewer2 >> setupMethodDropList [
 	methodDropList
 		items:
-			(methodProvider methods , methodProvider class methods
+			(methodProvider methods 
 				select: [ :each | each category = 'methods' ]) asOrderedCollection; 
 			displayBlock: [ :item | item selector ].
 	methodDropList listItems ifNil: [ ^ self ].
