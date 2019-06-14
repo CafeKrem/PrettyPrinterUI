@@ -181,6 +181,17 @@ BISettingPreviewerTest >> testWhenDropListSelectionChangedShouldBeforePrettyCont
 	equals: biSettingPreviewer methodDropList selectedItem sourceCode
 ]
 
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenSaveAMethodShouldBeInstanceSide [
+	[ 
+	biSettingPreviewer beforePrettyPrintTextPresenter
+		text: 'myMethodTestazert ' , String  cr , '^ klm'.
+	biSettingPreviewer saveMethodButton click ]
+		ensure: [ [ (BIUseForTest >> #myMethodTestazert) removeFromSystem ]
+				on: KeyNotFound
+				do: [ self fail ] ]
+]
+
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContextOfPrettyPrinter [
 	biSettingPreviewer settingsDropList
