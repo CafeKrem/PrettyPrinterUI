@@ -320,11 +320,12 @@ BISettingPreviewer2 >> initializeWidgets [
 		when: BISettingsChanged
 		send: #whenASettingChanged
 		to: self."
-		self unregisterAnnouncement.
+	self unregisterAnnouncement.
 	SystemAnnouncer uniqueInstance weak
 		when: MethodAdded send: #methodAdded: to: self;
-		when: MethodRemoved send: #methodRemoved: to: self.
-		self announcer when: WindowClosed send: #onWindowClosed to: self.
+		when: MethodRemoved send: #methodRemoved: to: self;
+		when: MethodModified send: #methodModified: to: self.
+	self announcer when: WindowClosed send: #onWindowClosed to: self.
 	self focusOrder
 		add: settingsTree;
 		add: chooseMethodUI;
@@ -350,6 +351,19 @@ BISettingPreviewer2 >> methodAdded: aMethodAdded [
 { #category : #accessing }
 BISettingPreviewer2 >> methodDropList [
 	^ methodDropList
+]
+
+{ #category : #'system-Announcement' }
+BISettingPreviewer2 >> methodModified: aModifiedMethod [
+	(aModifiedMethod methodOrigin = methodProvider
+		and: [ isSettingModification not ])
+		ifFalse: [ ^ self ].
+	methodDropList
+		items:
+			(methodDropList listItems
+				removeAllSuchThat: [ :method | method selector = aModifiedMethod method selector ];
+				add: aModifiedMethod method;
+				yourself)
 ]
 
 { #category : #accessing }
@@ -439,9 +453,9 @@ BISettingPreviewer2 >> setupChooseMethodUI [
 BISettingPreviewer2 >> setupMethodDropList [
 	methodDropList
 		items:
-			(methodProvider methods , methodProvider class methods
-				select: [ :each | each category = 'methods' ]) asOrderedCollection; 
-			displayBlock: [ :item | item selector ].
+			(methodProvider methods select: [ :each | each category = 'methods' ])
+				asOrderedCollection;
+		displayBlock: [ :item | item selector ].
 	methodDropList listItems ifNil: [ ^ self ].
 	methodDropList selectedIndex: 1
 ]
