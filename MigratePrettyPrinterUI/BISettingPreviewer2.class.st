@@ -114,6 +114,41 @@ BISettingPreviewer2 class >> settingsOn: aBuilder [
 	
 ]
 
+{ #category : #'as yet unclassified' }
+BISettingPreviewer2 class >> specLayoutHHizontal [
+    ^ SpecPanedLayout newHorizontal
+        add:
+            (SpecBoxLayout newVertical
+                add:
+                    (SpecBoxLayout newVertical
+                        add:
+                            (SpecBoxLayout newHorizontal
+                                add: #saveSettingButton;
+                                add: #removeSettingButton;
+                                yourself)
+                            withConstraints: [ :contraint | contraint height: 30 ];
+                        add: #settingsDropList
+                            withConstraints: [ :contraint | contraint height: 30 ];
+                        yourself);
+                add: #settingsTree;
+                yourself);
+        add:
+            (SpecBoxLayout newVertical
+                add:
+                    (SpecBoxLayout newHorizontal
+                        add: #saveMethodButton;
+                        add: #removeMethodButton;
+                        add: #chooseMethodUI;
+                        yourself)
+                    withConstraints: [ :contraint | contraint height: 30 ];
+                add: #methodDropList
+                    withConstraints: [ :contraint | contraint height: 30 ];
+                add: #beforePrettyPrintTextPresenter;
+                add: #afterPrettyPrintTextPresenter;
+                yourself);
+        yourself
+]
+
 { #category : #visiting }
 BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
 	anInstanceOFBIChooseMethodUI methodList selection selectedItem
