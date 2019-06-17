@@ -1,3 +1,22 @@
+"
+i'm using to ask to user a String for something:
+example:
+	BISettingPreviewer use it to ask a name of a method that he want to creat
+
+HOW to use in your UI:
+1 - BIInputPresenterUI class method openOn:
+2 - you have to define method 'acceptActionSBICodePresenter: aReferenceToYourUI ' 
+	in this method you define the action of okButton 
+	
+Internal Representation and Key Implementation Points.
+
+    Instance Variables
+	codePresenter:		<InputTextPresenter>
+	uiReceiver:		<SubClassOfComposablePresenter> 
+
+
+    Implementation Points
+"
 Class {
 	#name : #BIInputPresenterUI,
 	#superclass : #ComposablePresenter,

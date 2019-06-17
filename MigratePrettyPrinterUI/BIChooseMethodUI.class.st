@@ -1,3 +1,26 @@
+"
+i'm an UI to select a method , package , class 
+
+HOW TO USE in your UI:
+1 - use BIChooseMethodUi class method openOn: 
+2 - you will have to define the method 'acceptAction: aReferenceOfBIChooseMethod' , this method use the pattern visitor , in this method you will define the action of okButton 
+	for example you can use to select a class 
+
+ 
+Internal Representation and Key Implementation Points.
+
+    Instance Variables
+	classList:		<ListPresenter>
+	isInstanceButtonSelected:		<Boolean>
+	methodList:		<ListPresenter>
+	packageList:		<ListPresenter>
+	radioButtonClassSide:		<RadioButtonPresenter>
+	radioButtonInstanceSide:		<RadioButtonPresenter>
+	uiReceiver:		<subClassOfComposablePresenter> a reference to a UI
+
+
+    Implementation Points
+"
 Class {
 	#name : #BIChooseMethodUI,
 	#superclass : #ComposablePresenter,
@@ -70,7 +93,7 @@ BIChooseMethodUI >> classMethodsOfSelectedClassItem: selectedClass [
 { #category : #initialization }
 BIChooseMethodUI >> initializeDialogWindow: aDialog [
 	super initializeDialogWindow: aDialog.
-	aDialog okAction: [ :presenter | uiReceiver acceptAction: self  ]
+	aDialog okAction: [ :presenter | uiReceiver acceptActionBIChooseMethod: self  ]
 ]
 
 { #category : #initialization }
