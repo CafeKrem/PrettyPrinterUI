@@ -1,3 +1,87 @@
+"
+i'm a UI for show you how the setting of prettyPrinter(code formater ) will be applied on method not formated
+
+ROADMAP
+-------
+
+- [X] 1st step migration to Spec 2 
+	- [X] add a set of method to format and add/remove to the set
+	- [X] show before and after format
+	- [x] add a set of setting (context) to configure formater 
+- [ ] 2nd step 
+	- [ ] extract conduct of SettingDeclaration ( one part setting , other part visitor  ) see DEV part , settingTree
+- [ ] 3rd step 
+	- [ ] when click on a specific setting show you some example with this setting to understand how ti's work
+README DEV & USER 
+-----------------
+
+be carefull of settingDropList and the table of setting customization each time you modified something it's save into system.
+
+USER Part 
+---------
+i'm composed of : 
+1) a tree of setting each row it's like this (name of a setting , one or more input to customize them ) 
+2) 
+	2.A) 3 buttons
+		a) save button it save what you write in the textArea below 
+		b) remove Current Method it's remove the dropList selectedItem
+		c) call another UI to select another method in the system 
+	2.B ) the methodDropList it's a dropList to switch method to show you how it will be formate
+		each time you change the selectedItem it will change the content of textArea before formate and also the after formate textArea 
+	2.C) it's a textArea to show the method to format
+3) 
+	3.A) 2  buttons
+		a) the first one call 'save' it's use to save the configuration of the formater it will ask you a name for the method and it will appear in the setting dropList
+		b) the remove Button it's remove selectedItem of Setting DropList 
+	3.B) it's the setting dropList each time you change it refresh all the textArea
+	3.C) textArea to show formate Code 
+DEV part
+-------- 
+
+##############
+MethodProvider 
+##############
+
+this UI use a reference to another class 'instance variable : methodProvider'
+	in this class 
+		- class side we store all setting at format STON with tag 'settings'
+		- instance side we store all method to format with tag: 'methods'
+
+###########
+settingTree
+###########
+
+the settingTree is write in morph for the moment it will take me too much to migrate it to Spec 2 
+the problem is :
+	the setting is higly link to morph 
+	in the SettingDeclaration there is a method get an input/widget to customize with someting like a visitor.I think to migrate this part we will have to extract this feature with a visitor
+	LINK:
+	SettingDeclaration >> inputWidget , it's the method like a Visitor
+	
+#############
+other widgets
+#############
+
+nothing to say  
+
+Internal Representation and Key Implementation Points.
+
+    Instance Variables
+	afterPrettyPrintTextPresenter:		<CodePresenter>
+	beforePrettyPrintTextPresenter:		<CodePresenter>
+	chooseMethodUI:		<ButtonPresenter>
+	formaterPrettyPrinter:		<BIConfigurableFormatter>
+	isSettingModification:		<Boolean>
+	methodDropList:		<DropListPresenter>
+	methodProvider:		<Object> reference to another class 
+	removeMethodButton:		<ButtonPresenter>
+	removeSettingButton:		<buttonPresenter>
+	saveMethodButton:		<buttonPresenter>
+	saveSettingButton:		<buttonPresenter>
+	settingsDropList:		<DropListPresenter>
+	settingsTree:		<TablePresenter>
+
+"
 Class {
 	#name : #BISettingPreviewer2,
 	#superclass : #ComposablePresenter,
@@ -150,7 +234,7 @@ BISettingPreviewer2 class >> specLayoutHHizontal [
 ]
 
 { #category : #visiting }
-BISettingPreviewer2 >> acceptAction: anInstanceOFBIChooseMethodUI [
+BISettingPreviewer2 >> acceptActionBIChooseMethod: anInstanceOFBIChooseMethodUI [
 	anInstanceOFBIChooseMethodUI methodList selection selectedItem
 		ifNil: [ self inform: 'you have to select a method' ]
 		ifNotNil:
