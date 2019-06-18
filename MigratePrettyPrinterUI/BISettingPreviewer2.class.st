@@ -100,8 +100,9 @@ Class {
 		'formaterPrettyPrinter',
 		'isSettingModification'
 	],
-	#classInstVars : [
-		'methodProvider'
+	#classVars : [
+		'FormaterPrettyPrinter',
+		'MethodProvider'
 	],
 	#category : #MigratePrettyPrinterUI
 }
@@ -113,6 +114,16 @@ BISettingPreviewer2 class >> buildOpenBIInspectorButton [
 		getState: #openBIInspectorButtonState
 		action: #openBIInspectorButtonAction
 		label: #openBIInspectorButtonLabel
+]
+
+{ #category : #'instance creation' }
+BISettingPreviewer2 class >> defaultFormater [
+	FormaterPrettyPrinter := BIConfigurableFormatter new
+]
+
+{ #category : #'instance creation' }
+BISettingPreviewer2 class >> defaultMethodProvider [
+	MethodProvider := BIMethodProvider
 ]
 
 { #category : #specs }
@@ -150,20 +161,15 @@ BISettingPreviewer2 class >> dialogOpenBIPreviewer [
 
 { #category : #accessing }
 BISettingPreviewer2 class >> methodProvider [
-	^ methodProvider
+	^ MethodProvider
 ]
 
 { #category : #'instance creation' }
 BISettingPreviewer2 class >> open [
 	<script>
-	methodProvider := BIMethodProvider.
-	self new openWithSpec 
-]
-
-{ #category : #'instance creation' }
-BISettingPreviewer2 class >> open: aClass [
 	| presenter |
-	methodProvider := aClass.
+	MethodProvider := BIMethodProvider.
+	FormaterPrettyPrinter := BIConfigurableFormatter.
 	presenter := self new.
 	presenter openWithSpec.
 	^ presenter
@@ -183,6 +189,36 @@ BISettingPreviewer2 class >> openBIInspectorButtonLabel [
 { #category : #'button behavior' }
 BISettingPreviewer2 class >> openBIInspectorButtonState [
 	^ true
+]
+
+{ #category : #'instance creation' }
+BISettingPreviewer2 class >> openFormater: anInstanceOfFormater [
+	| presenter |
+	FormaterPrettyPrinter := anInstanceOfFormater .
+	self defaultMethodProvider.
+	presenter := self new.
+	presenter openWithSpec.
+	^ presenter
+]
+
+{ #category : #'instance creation' }
+BISettingPreviewer2 class >> openFormater: anInstanceOfFormater onClass: aClass [
+	| presenter |
+	MethodProvider := aClass.
+	FormaterPrettyPrinter := anInstanceOfFormater.
+	presenter := self new.
+	presenter openWithSpec.
+	^ presenter
+]
+
+{ #category : #'instance creation' }
+BISettingPreviewer2 class >> openOnClass: aClass [
+	| presenter |
+	MethodProvider := aClass.
+	self defaultFormater.
+	presenter := self new.
+	presenter openWithSpec.
+	^ presenter
 ]
 
 { #category : #settings }
@@ -242,7 +278,7 @@ BISettingPreviewer2 >> acceptActionBIChooseMethod: anInstanceOFBIChooseMethodUI 
 ]
 
 { #category : #visiting }
-BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
+BISettingPreviewer2 >> acceptActionBICodePresenter: aBICodePresenter [
 	| string newSettingMethod |
 	isSettingModification := true.
 	string := String
@@ -253,15 +289,14 @@ BISettingPreviewer2 >> acceptActionSBICodePresenter: aBICodePresenter [
 				tab;
 				nextPutAll: '^ '.
 			(STON
-				toStringPretty: BIConfigurableFormatter defaultPrettyPrintContext)
+				toStringPretty: formaterPrettyPrinter class defaultPrettyPrintContext)
 				storeOn: stream ].
 	newSettingMethod := methodProvider class
 		>> (methodProvider class compile: string).
 	newSettingMethod protocol: 'settings'.
 	settingsDropList
 		items:
-			(settingsDropList
-				listItems
+			(settingsDropList listItems
 				removeAllSuchThat: [ :item | item selector = newSettingMethod selector ];
 				add: newSettingMethod;
 				yourself).
@@ -398,8 +433,8 @@ BISettingPreviewer2 >> initialExtent [
 
 { #category : #initialization }
 BISettingPreviewer2 >> initialize [
+	super initialize.
 	isSettingModification := false.
-	super initialize 
 ]
 
 { #category : #initialization }
@@ -414,8 +449,8 @@ BISettingPreviewer2 >> initializePresenter [
 
 { #category : #initialization }
 BISettingPreviewer2 >> initializeWidgets [
-	self defaultMethodProvider.
-	formaterPrettyPrinter := BIConfigurableFormatter new.
+	methodProvider := MethodProvider.
+	formaterPrettyPrinter := FormaterPrettyPrinter.
 	settingsTree := self newTree.
 	methodDropList := self newDropList.
 	chooseMethodUI := self newButton.
@@ -622,11 +657,16 @@ BISettingPreviewer2 >> setupSettingsDropList [
 
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> setupSettingsTree [
+	| parentName |
+	(formaterPrettyPrinter class respondsTo: #settingGroup)
+		ifFalse: [ parentName := #blueInkFormatter ]
+		ifTrue: [ parentName := formaterPrettyPrinter class settingGroup ].
 	settingsTree
 		roots:
 			((SettingTree acceptableKeywords: #(#systemsettings)) nodeList
-				select: [ :node | node parentName = #blueInkFormatter ]) asOrderedCollection; 
-			displayBlock: [ :node | self displayNodeFor: node ]
+				select: [ :node | node parentName = parentName ])
+				asOrderedCollection;
+		displayBlock: [ :node | self displayNodeFor: node ]
 ]
 
 { #category : #api }
