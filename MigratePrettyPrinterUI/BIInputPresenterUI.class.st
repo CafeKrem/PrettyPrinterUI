@@ -49,7 +49,7 @@ BIInputPresenterUI >> codePresenter [
 { #category : #initialization }
 BIInputPresenterUI >> initializeDialogWindow: aDialog [
 	super initializeDialogWindow: aDialog.
-	aDialog okAction: [ :presenter | uiReceiver acceptActionSBICodePresenter: self  ]
+	aDialog okAction: [ :presenter | uiReceiver acceptActionBICodePresenter: self  ]
 ]
 
 { #category : #initialization }
