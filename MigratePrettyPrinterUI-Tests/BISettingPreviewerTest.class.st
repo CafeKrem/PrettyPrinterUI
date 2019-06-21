@@ -32,7 +32,7 @@ BISettingPreviewerTest >> selectPackageNamed: aName FromUI: biChooseMethod [
 { #category : #running }
 BISettingPreviewerTest >> setUp [
 	"Hooks that subclasses may override to define the fixture of test."
-	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
+	biSettingPreviewer := BISettingPreviewer2 openOnClass: BIUseForTest.
 	
 	
 ]
@@ -54,7 +54,7 @@ BISettingPreviewerTest >> testClickChooseMethodButtonAndAcceptWithNotNilMethodSh
 	self
 		selectClassNamed: BIUseForTestWithMethod name
 		FromUI: chooseMethodUI.
-	biSettingPreviewer acceptAction: chooseMethodUI.
+	biSettingPreviewer acceptActionBIChooseMethod: chooseMethodUI.
 	self
 		assert: biSettingPreviewer beforePrettyPrintTextPresenter text
 		equals: chooseMethodUI methodList selection selectedItem sourceCode
@@ -65,7 +65,7 @@ BISettingPreviewerTest >> testClickOnRemoveMethodButtonShouldRemoveTheFromMethod
 	[ BIUseForTest  
 		compile: 'myMethodTestazert ' , String cr , '^ klm'.
 		(BIUseForTest   >> #myMethodTestazert) protocol: 'methods'.
-	biSettingPreviewer := BISettingPreviewer2 open: BIUseForTest.
+	biSettingPreviewer := BISettingPreviewer2 openOnClass: BIUseForTest.
 	biSettingPreviewer methodDropList
 		selectedIndex:
 			(biSettingPreviewer methodDropList listItems indexOf: (BIUseForTest>>#myMethodTestazert)).
