@@ -267,6 +267,22 @@ BISettingPreviewerTest >> testWhenWeDelateAMethodInBrowserShouldRemoveThisOneFro
 ]
 
 { #category : #tests }
+BISettingPreviewerTest >> testWhenWeHave2MethodWithSameASTAndWeWantToremoveOneOfThemShouldRemoveTheGoodONeNotTheFirst [
+	biSettingPreviewer methodProvider compile: 'zzzzzzx'.
+	biSettingPreviewer methodProvider compile: 'zzzzzzz'.
+	biSettingPreviewer methodDropList
+		selectedIndex:
+			((biSettingPreviewer methodDropList listItems collect: #selector)
+				indexOf: 'zzzzzzz').
+	self assert: biSettingPreviewer methodDropList selectedItem selector equals: 'zzzzzzz'.
+	biSettingPreviewer removeMethodButton click.
+	self deny: ((biSettingPreviewer methodDropList listItems collect: #selector) includes:  'zzzzzzz' ).
+	self assert: ((biSettingPreviewer methodDropList listItems collect: #selector) includes:  'zzzzzzx' ).
+	
+	
+]
+
+{ #category : #tests }
 BISettingPreviewerTest >> testWhenWeModifiedAMethodInBrowserShouldModifieBeforePrettyPrintTextPresenter [
 	BIUseForTest
 		compile:

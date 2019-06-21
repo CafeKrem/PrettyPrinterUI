@@ -540,7 +540,7 @@ BISettingPreviewer2 >> methodRemoved: aMethodRemoved [
 	methodDropList
 		items:
 			(methodDropList listItems
-				remove: aMethodRemoved method;
+				removeAllSuchThat: [ :method | method selector = aMethodRemoved method selector ];
 				yourself)
 ]
 
