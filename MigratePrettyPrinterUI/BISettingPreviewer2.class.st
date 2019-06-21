@@ -168,8 +168,8 @@ BISettingPreviewer2 class >> methodProvider [
 BISettingPreviewer2 class >> open [
 	<script>
 	| presenter |
-	MethodProvider := BIMethodProvider.
-	FormaterPrettyPrinter := BIConfigurableFormatter.
+	self defaultMethodProvider.
+	self defaultFormater.
 	presenter := self new.
 	presenter openWithSpec.
 	^ presenter
@@ -192,7 +192,7 @@ BISettingPreviewer2 class >> openBIInspectorButtonState [
 ]
 
 { #category : #'instance creation' }
-BISettingPreviewer2 class >> openFormater: anInstanceOfFormater [
+BISettingPreviewer2 class >> openFormaterWithAnInstanceOfFormater: anInstanceOfFormater [
 	| presenter |
 	FormaterPrettyPrinter := anInstanceOfFormater .
 	self defaultMethodProvider.
@@ -202,7 +202,7 @@ BISettingPreviewer2 class >> openFormater: anInstanceOfFormater [
 ]
 
 { #category : #'instance creation' }
-BISettingPreviewer2 class >> openFormater: anInstanceOfFormater onClass: aClass [
+BISettingPreviewer2 class >> openFormaterWithAnInstanceOfFormater: anInstanceOfFormater onClass: aClass [
 	| presenter |
 	MethodProvider := aClass.
 	FormaterPrettyPrinter := anInstanceOfFormater.
