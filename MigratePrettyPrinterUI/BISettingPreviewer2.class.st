@@ -84,7 +84,7 @@ Internal Representation and Key Implementation Points.
 "
 Class {
 	#name : #BISettingPreviewer2,
-	#superclass : #ComposablePresenter,
+	#superclass : #SpPresenter,
 	#instVars : [
 		'settingsTree',
 		'chooseMethodUI',
