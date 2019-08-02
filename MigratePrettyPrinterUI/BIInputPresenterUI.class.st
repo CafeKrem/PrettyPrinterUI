@@ -19,7 +19,7 @@ Internal Representation and Key Implementation Points.
 "
 Class {
 	#name : #BIInputPresenterUI,
-	#superclass : #ComposablePresenter,
+	#superclass : #SpPresenter,
 	#instVars : [
 		'uiReceiver',
 		'codePresenter'
@@ -54,7 +54,7 @@ BIInputPresenterUI >> initializeDialogWindow: aDialog [
 
 { #category : #initialization }
 BIInputPresenterUI >> initializeWidgets [ 
-	codePresenter := self instantiate: TextInputFieldPresenter.
+	codePresenter := self instantiate: SpTextInputFieldPresenter.
 	codePresenter placeholder: 'write the name of you configuration'.
 	codePresenter autoAccept: true
 ]

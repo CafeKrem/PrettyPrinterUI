@@ -23,7 +23,7 @@ Internal Representation and Key Implementation Points.
 "
 Class {
 	#name : #BIChooseMethodUI,
-	#superclass : #ComposablePresenter,
+	#superclass : #SpPresenter,
 	#instVars : [
 		'packageList',
 		'classList',
