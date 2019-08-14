@@ -225,7 +225,7 @@ BIUseForTest >> useForTestWillBeModified [
 ^ 'what i have in my hat ? A Banana'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #methods }
 BIUseForTest >> useForTestWillBeRemove [
-^ 'klmklm' 
+^ 'klmkklkmlkmk's
 ]

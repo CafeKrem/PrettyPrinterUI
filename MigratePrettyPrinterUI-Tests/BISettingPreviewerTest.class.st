@@ -70,7 +70,7 @@ BISettingPreviewerTest >> testClickChooseMethodButtonAndAcceptWithNotNilMethodSh
 		FromUI: chooseMethodUI.
 	biSettingPreviewer acceptActionBIChooseMethod: chooseMethodUI.
 	self
-		assert: biSettingPreviewer beforePrettyPrintTextPresenter text
+		assert: biSettingPreviewer notFormatedTextPresenter text
 		equals: chooseMethodUI methodList selection selectedItem sourceCode
 ]
 
@@ -96,7 +96,7 @@ BISettingPreviewerTest >> testClickOnRemoveMethodButtonShouldRemoveTheFromMethod
 { #category : #tests }
 BISettingPreviewerTest >> testClickOnSaveMethodButtonShouldAddToMethodDropListAndToTheMethodProviderClass [
 	[ 
-	biSettingPreviewer beforePrettyPrintTextPresenter
+	biSettingPreviewer notFormatedTextPresenter
 		text: 'myMethodTestazert ' , String cr , '^ klm'.
 	biSettingPreviewer saveMethodButton click.
 	self
@@ -118,16 +118,15 @@ BISettingPreviewerTest >> testDropListSelectedIndexShouldBeEqualsToOne [
 
 { #category : #initialization }
 BISettingPreviewerTest >> testInitializeAfterPrettyShouldFillWithTheSelectedItemOfDropListPresenter [
-	self flag:'pretyPrinter error'.
 	self
-		assert: biSettingPreviewer afterPrettyPrintTextPresenter text
+		assert: biSettingPreviewer formatedTextPresenter text
 		equals: (biSettingPreviewer formaterPrettyPrinter format: biSettingPreviewer  methodDropList selectedItem ast)
 ]
 
 { #category : #initialization }
 BISettingPreviewerTest >> testInitializeBeforePrettyShouldFillWithTheSelectedItemOfDropListPresenter [
 	self
-		assert: biSettingPreviewer beforePrettyPrintTextPresenter text
+		assert: biSettingPreviewer notFormatedTextPresenter text
 		equals: biSettingPreviewer methodDropList selectedItem sourceCode
 ]
 
@@ -151,7 +150,7 @@ BISettingPreviewerTest >> testWhenAddNewWithSameAsAnOhterOneShouldRemoveTheOldOn
 
 { #category : #tests }
 BISettingPreviewerTest >> testWhenAddingAMethodMethodDropListYouldBeSetAtTheNewMethod [
-    [biSettingPreviewer beforePrettyPrintTextPresenter
+    [biSettingPreviewer notFormatedTextPresenter
         text:
             'xmyTestMethodItWillBeRemoveAtTheEndOfThisTest' , String cr
                 , '^ ''klmùklmklmklmkmlkmkmlkmkmlkkmlkml'''.
@@ -228,14 +227,14 @@ BISettingPreviewerTest >> testWhenClickOnSaveSettingButtonShouldCreateMethodClas
 { #category : #tests }
 BISettingPreviewerTest >> testWhenDropListSelectionChangedShouldBeforePrettyContainTheSelectedMethod [
 	biSettingPreviewer methodDropList selectedIndex: 2.
-	self assert: biSettingPreviewer beforePrettyPrintTextPresenter text 
+	self assert: biSettingPreviewer notFormatedTextPresenter text 
 	equals: biSettingPreviewer methodDropList selectedItem sourceCode
 ]
 
 { #category : #tests }
 BISettingPreviewerTest >> testWhenSaveAMethodShouldBeInstanceSide [
 	[ 
-	biSettingPreviewer beforePrettyPrintTextPresenter
+	biSettingPreviewer notFormatedTextPresenter
 		text: 'myMethodTestazert ' , String  cr , '^ klm'.
 	biSettingPreviewer saveMethodButton click ]
 		ensure: [ [ (BIUseForTest >> #myMethodTestazert) removeFromSystem ]
@@ -275,7 +274,7 @@ BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContex
         deny: biSettingPreviewer settingsDropList selectedItem selector
         equals: #testConfigIdentStringTabulation.
     prettyPrintingBeforeChanging := biSettingPreviewer
-        afterPrettyPrintTextPresenter text.
+        formatedTextPresenter text.
     biSettingPreviewer settingsDropList
         selectedIndex:
             (biSettingPreviewer settingsDropList listItems
@@ -283,7 +282,7 @@ BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContex
                     biSettingPreviewer methodProvider class
                         >> #testConfigIdentStringTabulation).
     self
-        deny: biSettingPreviewer afterPrettyPrintTextPresenter text
+        deny: biSettingPreviewer formatedTextPresenter text
         equals: prettyPrintingBeforeChanging
 ]
 
@@ -352,7 +351,7 @@ BISettingPreviewerTest >> testWhenWeModifiedAMethodInBrowserShouldModifieBeforeP
 			(biSettingPreviewer methodDropList listItems
 				indexOf: BIUseForTest >> #useForTestWillBeModified).
 	self
-		assert: biSettingPreviewer beforePrettyPrintTextPresenter text
+		assert: biSettingPreviewer notFormatedTextPresenter text
 		equals:
 			'useForTestWillBeModified' , String cr
 				, '^ ''what i have in my hat ? A Banana'''
