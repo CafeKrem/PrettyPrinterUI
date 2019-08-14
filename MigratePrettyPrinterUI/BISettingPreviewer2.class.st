@@ -275,28 +275,34 @@ BISettingPreviewer2 >> acceptActionBIChooseMethod: anInstanceOFBIChooseMethodUI 
 
 { #category : #visiting }
 BISettingPreviewer2 >> acceptActionBICodePresenter: aBICodePresenter [
-	| string newSettingMethod |
-	isSettingModification := true.
-	string := String
-		streamContents: [ :stream | 
-			stream
-				nextPutAll: aBICodePresenter codePresenter text;
-				cr;
-				tab;
-				nextPutAll: '^ '.
-			(STON
-				toStringPretty: formaterPrettyPrinter class defaultPrettyPrintContext)
-				storeOn: stream ].
-	newSettingMethod := methodProvider class
-		>> (methodProvider class compile: string).
-	newSettingMethod protocol: 'settings'.
-	settingsDropList
-		items:
-			(settingsDropList listItems
-				removeAllSuchThat: [ :item | item selector = newSettingMethod selector ];
-				add: newSettingMethod;
-				yourself).
-	isSettingModification := false
+    "I'm compile a method returning a String at Ston format of the context"
+
+    | string newSettingMethod |
+    isSettingModification := true.
+    string := String
+        streamContents: [ :stream | 
+            stream
+                nextPutAll: aBICodePresenter codePresenter text;
+                cr;
+                tab;
+                nextPutAll: '^ '.
+            (STON
+                toStringPretty: formaterPrettyPrinter class defaultPrettyPrintContext)
+                storeOn: stream ].
+    newSettingMethod := methodProvider class
+        >> (methodProvider class compile: string).
+    newSettingMethod protocol: 'settings'.
+    settingsDropList
+        items:
+            (settingsDropList listItems
+                removeAllSuchThat: [ :item | item selector = newSettingMethod selector ];
+                add: newSettingMethod;
+                yourself).
+    settingsDropList
+        selectedIndex:
+            ((settingsDropList listItems collect: #selector)
+                indexOf: newSettingMethod selector).
+    isSettingModification := false
 ]
 
 { #category : #'initialization widgets' }
