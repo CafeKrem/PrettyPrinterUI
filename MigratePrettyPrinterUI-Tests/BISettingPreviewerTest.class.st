@@ -136,29 +136,52 @@ BISettingPreviewerTest >> testWhenAddNewWithSameAsAnOhterOneShouldRemoveTheOldOn
 
 ]
 
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenAddingAMethodMethodDropListYouldBeSetAtTheNewMethod [
+    [biSettingPreviewer beforePrettyPrintTextPresenter
+        text:
+            'xmyTestMethodItWillBeRemoveAtTheEndOfThisTest' , String cr
+                , '^ ''klmùklmklmklmkmlkmkmlkmkmlkkmlkml'''.
+	biSettingPreviewer saveMethodButton click.
+	self assert: biSettingPreviewer methodDropList selectedItem selector 
+	equals: #xmyTestMethodItWillBeRemoveAtTheEndOfThisTest ] ensure: [ (biSettingPreviewer methodProvider >> #xmyTestMethodItWillBeRemoveAtTheEndOfThisTest ) removeFromSystem ]
+]
+
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSettingDropListAndFromProvideMethodClass [
-	[ | codePresenterUI|
-	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
-	codePresenterUI presenter codePresenter text:'myConfigForTest'.
-	codePresenterUI triggerOkAction.
-	codePresenterUI delete.
-	biSettingPreviewer settingsDropList
-		selectedIndex:
-			(biSettingPreviewer settingsDropList listItems
-				indexOf: BIUseForTest class >> #myConfigForTest).
-	biSettingPreviewer removeSettingButton click.
-	self
-		deny:
-			(biSettingPreviewer settingsDropList listItems
-				anySatisfy: [ :item | item selector = #myConfigForTest ]).
-	self
-		deny:
-			(BIUseForTest class methods
-				anySatisfy: [ :item | item selector = #myConfigForTest ]) ]
-		ensure: [ [ (BIUseForTest class >> #myConfigForTest) removeFromSystem ]
-				on: KeyNotFound
-				do: [  ] ]
+    [ | stream |
+    stream := ReadWriteStream with: OrderedCollection new.
+    stream
+        nextPut: 'testConfigRemoveSettingTest';
+        nextPut: String cr;
+        nextPut: '^ '.
+    biSettingPreviewer methodProvider contentRemovable storeOn: stream.
+    biSettingPreviewer methodProvider class
+        compile: ('' join: stream contents).
+    BIUseForTest class >> #testConfigRemoveSettingTest
+        protocol: 'settings'.
+    biSettingPreviewer settingsDropList
+        items:
+            (biSettingPreviewer methodProvider class methods
+                select: [ :method | 
+                    method protocol = #settings ]) asOrderedCollection.
+    biSettingPreviewer settingsDropList
+        selectedIndex:
+            (biSettingPreviewer settingsDropList listItems
+                indexOf: BIUseForTest class >> #testConfigRemoveSettingTest).
+    biSettingPreviewer removeSettingButton click.
+    self
+        deny:
+            (biSettingPreviewer settingsDropList listItems
+                anySatisfy: [ :item | item selector = #testConfigRemoveSettingTest ]).
+    self
+        deny:
+            (BIUseForTest class methods
+                anySatisfy: [ :item | item selector = #testConfigRemoveSettingTest ]) ]
+        ensure: [ [ (BIUseForTest class >> #testConfigRemoveSettingTest)
+                removeFromSystem ]
+                on: KeyNotFound
+                do: [  ] ]
 ]
 
 { #category : #initialization }
@@ -227,13 +250,21 @@ BISettingPreviewerTest >> testWhenSaveAModifiedMethodShouldAppearOnlyOnceInMetho
 
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContextOfPrettyPrinter [
-	biSettingPreviewer settingsDropList
-		selectedIndex:
-			(biSettingPreviewer settingsDropList listItems
-				indexOf: biSettingPreviewer methodProvider class >> #myConfigTest2).
-	self
-		deny: biSettingPreviewer afterPrettyPrintTextPresenter text
-		equals: biSettingPreviewer formatPrettyPrint
+    | prettyPrintingBeforeChanging |
+    self
+        deny: biSettingPreviewer settingsDropList selectedItem selector
+        equals: #testConfigIdentStringTabulation.
+    prettyPrintingBeforeChanging := biSettingPreviewer
+        afterPrettyPrintTextPresenter text.
+    biSettingPreviewer settingsDropList
+        selectedIndex:
+            (biSettingPreviewer settingsDropList listItems
+                indexOf:
+                    biSettingPreviewer methodProvider class
+                        >> #testConfigIdentStringTabulation).
+    self
+        deny: biSettingPreviewer afterPrettyPrintTextPresenter text
+        equals: prettyPrintingBeforeChanging
 ]
 
 { #category : #tests }
@@ -268,18 +299,26 @@ BISettingPreviewerTest >> testWhenWeDelateAMethodInBrowserShouldRemoveThisOneFro
 
 { #category : #tests }
 BISettingPreviewerTest >> testWhenWeHave2MethodWithSameASTAndWeWantToremoveOneOfThemShouldRemoveTheGoodONeNotTheFirst [
-	biSettingPreviewer methodProvider compile: 'zzzzzzx'.
-	biSettingPreviewer methodProvider compile: 'zzzzzzz'.
-	biSettingPreviewer methodDropList
-		selectedIndex:
-			((biSettingPreviewer methodDropList listItems collect: #selector)
-				indexOf: 'zzzzzzz').
-	self assert: biSettingPreviewer methodDropList selectedItem selector equals: 'zzzzzzz'.
-	biSettingPreviewer removeMethodButton click.
-	self deny: ((biSettingPreviewer methodDropList listItems collect: #selector) includes:  'zzzzzzz' ).
-	self assert: ((biSettingPreviewer methodDropList listItems collect: #selector) includes:  'zzzzzzx' ).
-	
-	
+    self timeLimit: 1 minutes.
+    [ biSettingPreviewer methodProvider compile: 'zzzzzzx'.
+    biSettingPreviewer methodProvider compile: 'zzzzzzz'.
+    biSettingPreviewer methodDropList
+        selectedIndex:
+            ((biSettingPreviewer methodDropList listItems collect: #selector)
+                indexOf: 'zzzzzzz').
+    self
+        assert: biSettingPreviewer methodDropList selectedItem selector
+        equals: 'zzzzzzz'.
+    biSettingPreviewer removeMethodButton click.
+    self
+        deny:
+            ((biSettingPreviewer methodDropList listItems collect: #selector)
+                includes: 'zzzzzzz').
+    self
+        assert:
+            ((biSettingPreviewer methodDropList listItems collect: #selector)
+                includes: 'zzzzzzx') ]
+        ensure: [ (biSettingPreviewer methodProvider >> #zzzzzzx) removeFromSystem ]
 ]
 
 { #category : #tests }
