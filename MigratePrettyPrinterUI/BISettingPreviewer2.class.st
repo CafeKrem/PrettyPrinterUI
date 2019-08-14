@@ -358,27 +358,6 @@ BISettingPreviewer2 >> chooseMethodUI [
 	^ chooseMethodUI
 ]
 
-{ #category : #'item creation' }
-BISettingPreviewer2 >> displayNodeFor: aNode [
-	| nodeMorphLeft nodeMorphRight |
-	nodeMorphLeft := StringMorph contents: aNode item label.
-	nodeMorphRight := (self theme
-		newRowIn: World
-		for: {aNode settingDeclaration inputWidget})
-		clipSubmorphs: true;
-		cellInset: 0;
-		width: 570;
-		left: 400;   
-		yourself.
-	^ PanelMorph new
-		addAllMorphs:
-			{nodeMorphLeft.
-			nodeMorphRight};
-		color: Smalltalk ui theme lightBackgroundColor;
-		hResizing: #shrinkWrap;
-		yourself
-]
-
 { #category : #'initialization widgets' }
 BISettingPreviewer2 >> formatPrettyPrint [
 	^ formaterPrettyPrinter format: methodDropList selectedItem ast
@@ -441,7 +420,7 @@ BISettingPreviewer2 >> initializeWidgets [
 		to: self."
     methodProvider := MethodProvider.
     formaterPrettyPrinter := FormaterPrettyPrinter.
-    settingsTree := self newTree.
+    settingsTree := self newTreeTable.
     methodDropList := self newDropList.
     chooseMethodUI := self newButton.
     notFormatedTextPresenter := self newCode.
@@ -626,18 +605,15 @@ BISettingPreviewer2 >> setupSettingsDropList [
 BISettingPreviewer2 >> setupSettingsTree [
 	settingsTree
 		roots: self getSystemsettingsAsParentName;
-		displayBlock: [ :node | self displayNodeFor: node ]
+		addColumn: (SpStringTableColumn evaluated: [ :eachItem | eachItem item label ]);
+		addColumn:
+			(SpImageTableColumn
+				evaluated: [ :eachItem | eachItem settingDeclaration inputWidget ])
 ]
 
 { #category : #'system-Announcement' }
 BISettingPreviewer2 >> unregisterAnnouncement [
 SystemAnnouncer uniqueInstance unsubscribe: self  
-]
-
-{ #category : #initialization }
-BISettingPreviewer2 >> updateAllWidgets [
-	self needRebuild: true.
-	^ self buildWithSpec
 ]
 
 { #category : #'system-Announcement' }
