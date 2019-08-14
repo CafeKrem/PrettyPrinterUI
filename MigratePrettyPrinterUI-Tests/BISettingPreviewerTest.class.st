@@ -147,6 +147,16 @@ BISettingPreviewerTest >> testWhenAddingAMethodMethodDropListYouldBeSetAtTheNewM
 	equals: #xmyTestMethodItWillBeRemoveAtTheEndOfThisTest ] ensure: [ (biSettingPreviewer methodProvider >> #xmyTestMethodItWillBeRemoveAtTheEndOfThisTest ) removeFromSystem ]
 ]
 
+{ #category : #tests }
+BISettingPreviewerTest >> testWhenAddingAStteingSettingDropListShouldBeSetAtTheNewMethod [
+    [| codePresenterUI |
+	codePresenterUI := BIInputPresenterUI openOn: biSettingPreviewer.
+	codePresenterUI presenter codePresenter text: 'xtestAddingASetting'.
+	codePresenterUI triggerOkAction.
+	self assert: biSettingPreviewer settingsDropList selectedItem selector equals: #xtestAddingASetting]
+	ensure: [ (biSettingPreviewer methodProvider  class >> #xtestAddingASetting) removeFromSystem ]
+]
+
 { #category : #initialization }
 BISettingPreviewerTest >> testWhenClickOnRemoveSettingButtonShouldRemoveItFromSettingDropListAndFromProvideMethodClass [
     [ | stream |
@@ -193,9 +203,6 @@ BISettingPreviewerTest >> testWhenClickOnSaveSettingButtonShouldCreateMethodClas
 	self
 		assert: [ biSettingPreviewer settingsDropList listItems
 				anySatisfy: [ :item | item selector = #myConfigTest ] ].
-	self
-		assert: biSettingPreviewer settingsDropList selectedIndex
-		equals: 1.
 	self
 		assert:
 			(biSettingPreviewer methodProvider class methods
