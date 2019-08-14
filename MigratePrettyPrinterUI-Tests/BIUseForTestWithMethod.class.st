@@ -12,18 +12,9 @@ BIUseForTestWithMethod class >> gandalf [
 ]
 
 { #category : #'as yet unclassified' }
-BIUseForTestWithMethod >> ahhhhhhhhhhhhhhh [
-
+BIUseForTestWithMethod >> methodA [
 ]
 
 { #category : #'as yet unclassified' }
-BIUseForTestWithMethod >> banane [
-]
-
-{ #category : #'as yet unclassified' }
-BIUseForTestWithMethod >> leonNettoyeur [
-]
-
-{ #category : #'as yet unclassified' }
-BIUseForTestWithMethod >> pommeDeTerre [
+BIUseForTestWithMethod >> methodB [
 ]

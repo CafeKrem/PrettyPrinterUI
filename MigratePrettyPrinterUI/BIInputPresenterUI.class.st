@@ -29,7 +29,7 @@ Class {
 
 { #category : #specs }
 BIInputPresenterUI class >> defaultSpec [
-	^ SpecBoxLayout newHorizontal 
+	^ SpBoxLayout newHorizontal 
 		add: #codePresenter; yourself
 ]
 
