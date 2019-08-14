@@ -540,7 +540,17 @@ BISettingPreviewer2 >> methodProvider [
 
 { #category : #api }
 BISettingPreviewer2 >> methodProvider: aMethodProvider [
-	methodProvider := aMethodProvider 
+    methodProvider := aMethodProvider.
+    methodDropList
+        items:
+            (methodProvider methods
+                select: [ :method | method category = 'methods' ])
+                asOrderedCollection.
+    settingsDropList
+        items:
+            (methodProvider class methods
+                select: [ :method | method category = 'settings' ])
+                asOrderedCollection
 ]
 
 { #category : #'system-Announcement' }
