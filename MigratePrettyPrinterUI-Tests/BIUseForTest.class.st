@@ -227,5 +227,5 @@ BIUseForTest >> useForTestWillBeModified [
 
 { #category : #methods }
 BIUseForTest >> useForTestWillBeRemove [
-^ 'klmklm' 
+^ 'klmkklkmlkmk's
 ]
