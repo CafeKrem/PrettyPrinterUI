@@ -340,17 +340,19 @@ BISettingPreviewer2 >> actionSaveSettingButton [
 
 { #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionSettingDropList [
-	settingsDropList
-		whenSelectionChangedDo: [ :setting | 
-			formaterPrettyPrinter
-				installNewContext:
-					(STON
-						fromString:
-							(setting selectedItem model
-								valueWithReceiver: methodProvider
-								arguments: #())).
-			formatedTextPresenter text: self formatPrettyPrint
-			]
+    settingsDropList
+        whenSelectionChangedDo: [ :setting | 
+            | currentContext |
+            currentContext := STON
+                fromString:
+                    (setting selectedItem model
+                        valueWithReceiver: methodProvider
+                        arguments: #()).
+            formaterPrettyPrinter installNewContext: currentContext.
+            formatedTextPresenter text: self formatPrettyPrint.
+            formaterPrettyPrinter class
+                defaultPrettyPrintContext: currentContext.
+            settingsTree roots: self getSystemsettingsAsParentName ]
 ]
 
 { #category : #accessing }

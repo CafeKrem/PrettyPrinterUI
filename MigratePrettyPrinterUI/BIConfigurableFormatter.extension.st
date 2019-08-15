@@ -4,3 +4,8 @@ Extension { #name : #BIConfigurableFormatter }
 BIConfigurableFormatter class >> defaultPrettyPrintContext [
 	^ DefaultPrettyPrintContext
 ]
+
+{ #category : #'*MigratePrettyPrinterUI' }
+BIConfigurableFormatter class >> defaultPrettyPrintContext: aContext [
+	DefaultPrettyPrintContext := aContext  
+]
