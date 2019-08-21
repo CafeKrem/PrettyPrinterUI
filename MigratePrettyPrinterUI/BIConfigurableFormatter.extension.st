@@ -9,3 +9,8 @@ BIConfigurableFormatter class >> defaultPrettyPrintContext [
 BIConfigurableFormatter class >> defaultPrettyPrintContext: aContext [
 	DefaultPrettyPrintContext := aContext  
 ]
+
+{ #category : #'*MigratePrettyPrinterUI' }
+BIConfigurableFormatter class >> settingGroup [
+	^ #blueInkFormatter
+]

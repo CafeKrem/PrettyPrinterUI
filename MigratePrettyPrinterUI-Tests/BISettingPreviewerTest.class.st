@@ -268,22 +268,47 @@ BISettingPreviewerTest >> testWhenSaveAModifiedMethodShouldAppearOnlyOnceInMetho
 ]
 
 { #category : #initialization }
-BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldChangeTheContextOfPrettyPrinter [
-    | prettyPrintingBeforeChanging |
+BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldFormatedTextChanged [
+    | textChanged |
+	textChanged := false.
     self
         deny: biSettingPreviewer settingsDropList selectedItem selector
         equals: #testConfigIdentStringTabulation.
-    prettyPrintingBeforeChanging := biSettingPreviewer
-        formatedTextPresenter text.
-    biSettingPreviewer settingsDropList
+ 	biSettingPreviewer formatedTextPresenter whenTextChangedDo: [ textChanged := true ].   
+	biSettingPreviewer settingsDropList
         selectedIndex:
             (biSettingPreviewer settingsDropList listItems
                 indexOf:
                     biSettingPreviewer methodProvider class
                         >> #testConfigIdentStringTabulation).
     self
-        deny: biSettingPreviewer formatedTextPresenter text
-        equals: prettyPrintingBeforeChanging
+        assert: textChanged
+]
+
+{ #category : #initialization }
+BISettingPreviewerTest >> testWhenSettingsDropListSelectionShouldPrettyPrinterContextChanged [
+	| streamA streamB |
+	self
+		deny: biSettingPreviewer settingsDropList selectedItem selector
+		equals: #testConfigIdentStringTabulation.
+	biSettingPreviewer settingsDropList
+		selectedIndex:
+			(biSettingPreviewer settingsDropList listItems
+				indexOf:
+					biSettingPreviewer methodProvider class
+						>> #testConfigIdentStringTabulation).
+	streamA := ReadWriteStream on: OrderedCollection new.
+	streamB := ReadWriteStream on: OrderedCollection new.
+	biSettingPreviewer formaterPrettyPrinter class
+		defaultPrettyPrintContext storeOn: streamA.
+	(STON
+		fromString:
+			(biSettingPreviewer settingsDropList selectedItem
+				valueWithReceiver: biSettingPreviewer methodProvider
+				arguments: #())) storeOn: streamB.
+	self
+		assert: ('' join: streamA contents)
+		equals: ('' join: streamB contents)
 ]
 
 { #category : #tests }

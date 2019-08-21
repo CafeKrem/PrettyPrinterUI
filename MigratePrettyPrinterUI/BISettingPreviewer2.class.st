@@ -416,10 +416,6 @@ BISettingPreviewer2 >> initializePresenter [
 
 { #category : #initialization }
 BISettingPreviewer2 >> initializeWidgets [
-    "SystemAnnouncer uniqueInstance weak
-		when: BISettingsChanged
-		send: #whenASettingChanged
-		to: self."
     methodProvider := MethodProvider.
     formaterPrettyPrinter := FormaterPrettyPrinter.
     settingsTree := self newTreeTable.
@@ -497,17 +493,18 @@ BISettingPreviewer2 >> methodProvider [
 
 { #category : #api }
 BISettingPreviewer2 >> methodProvider: aMethodProvider [
-    methodProvider := aMethodProvider.
-    methodDropList
-        items:
-            (methodProvider methods
-                select: [ :method | method category = 'methods' ])
-                asOrderedCollection.
-    settingsDropList
-        items:
-            (methodProvider class methods
-                select: [ :method | method category = 'settings' ])
-                asOrderedCollection
+	methodProvider := aMethodProvider.
+	methodDropList
+		items:
+			(methodProvider methods
+				select: [ :method | method category = 'methods' ])
+				asOrderedCollection.
+	settingsDropList
+		items:
+			(methodProvider class methods
+				select: [ :method | method category = 'settings' ])
+				asOrderedCollection.
+	methodDropList selectedIndex: 1
 ]
 
 { #category : #'system-Announcement' }
@@ -584,7 +581,7 @@ BISettingPreviewer2 >> setupMethodDropList [
 		items:
 			(methodProvider methods select: [ :each | each category = 'methods' ])
 				asOrderedCollection;
-		displayBlock: [ :item | item selector ]
+		display: [ :item | item selector ]
 ]
 
 { #category : #'initialization widgets' }
@@ -593,7 +590,7 @@ BISettingPreviewer2 >> setupSettingsDropList [
 		items:
 			((methodProvider methods , methodProvider class methods)
 				asOrderedCollection select: [ :each | each category = 'settings' ]);
-		displayBlock: [ :each | each selector ].
+		display: [ :each | each selector ].
 	formaterPrettyPrinter
 		installNewContext:
 			(STON

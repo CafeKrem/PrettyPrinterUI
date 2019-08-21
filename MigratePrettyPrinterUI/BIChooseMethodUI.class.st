@@ -188,18 +188,19 @@ BIChooseMethodUI >> setupClassList [
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupMethodList [
 	methodList
-		items: (classList selection selectedItem methods sort: [:a :b |a selector < b selector]);
-		displayBlock: [ :item | item selector ];
+		items:
+			(classList selection selectedItem methods
+				sort: [ :a :b | a selector < b selector ]);
+		display: [ :item | item selector ];
 		selectIndex: 1
 ]
 
 { #category : #'initialize-widgets' }
 BIChooseMethodUI >> setupPackageList [
-	
 	packageList
-		items: (RPackageOrganizer default packages sort: [:a :b | a name < b name]);
-		icons: [:item |self iconNamed: #package];
-		displayBlock: [ :item | item name ];
+		items: (RPackageOrganizer default packages sort: [ :a :b | a name < b name ]);
+		icons: [ :item | self iconNamed: #package ];
+		display: [ :item | item name ];
 		selectIndex: 1
 ]
 
