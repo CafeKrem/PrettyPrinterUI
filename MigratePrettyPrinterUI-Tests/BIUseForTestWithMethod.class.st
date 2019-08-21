@@ -1,3 +1,6 @@
+"
+I'm using to testing import feature of the BISettingPreviewer
+"
 Class {
 	#name : #BIUseForTestWithMethod,
 	#superclass : #Object,

@@ -1,3 +1,6 @@
+"
+I'm using to test the BISettingPreviewer
+"
 Class {
 	#name : #BIUseForTest,
 	#superclass : #Object,
