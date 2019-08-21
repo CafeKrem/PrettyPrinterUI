@@ -282,7 +282,7 @@ BISettingPreviewer2 >> acceptActionBICodePresenter: aBICodePresenter [
 
 { #category : #'initialization-actions' }
 BISettingPreviewer2 >> actionChooseMethodUI [
-    chooseMethodUI action: [ BIChooseMethodUI openOn: self ]
+    chooseMethodUI action: [ SpChooseMethodUI openOn: self ]
 ]
 
 { #category : #'initialization-actions' }

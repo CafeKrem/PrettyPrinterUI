@@ -61,7 +61,7 @@ BISettingPreviewerTest >> testChangingMethodProvider [
 { #category : #tests }
 BISettingPreviewerTest >> testClickChooseMethodButtonAndAcceptWithNotNilMethodShouldFillBeforePrettyPrinterCodePresenter [
 	| chooseMethodUI |
-	chooseMethodUI := BIChooseMethodUI new.
+	chooseMethodUI := SpChooseMethodUI new.
 	self
 		selectPackageNamed: BIUseForTestWithMethod package name
 		FromUI: chooseMethodUI.
